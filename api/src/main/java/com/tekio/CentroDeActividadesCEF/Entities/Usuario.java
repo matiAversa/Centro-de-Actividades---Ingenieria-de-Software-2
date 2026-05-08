@@ -1,5 +1,6 @@
 package com.tekio.CentroDeActividadesCEF.Entities;
 import jakarta.persistence.*;
+import org.antlr.v4.runtime.misc.NotNull;
 
 
 @Entity
@@ -9,26 +10,45 @@ public class Usuario {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer userId;
 
+    @NotNull
     private String nombre;
 
+    @NotNull
     private String apellido;
 
+    @NotNull
     private String dni;
 
+    @NotNull
     private String fechaNacimiento; // formato DD/MM/AAAA
 
-//    @ManyToOne
-//    private Genero genero;
+    @NotNull
+    @JoinColumn(name = "idGenero", nullable = false)
+    @ManyToOne (fetch = FetchType.LAZY, optional = false)
+    private Genero genero;
 
+    @NotNull
     private String telefono;
 
+    @NotNull
     private String correo;
 
+    @NotNull
     private String contrasena;
 
-//    @ManyToOne
-//    private Rol rol;
-//
-//    @ManyToOne
-//    private FichaMedica fichaMedica;
+    @NotNull
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "idRol", nullable = false)
+    private Rol rol;
+
+    @OneToOne (mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JoinColumn(name = "idFichaMedica", nullable = false)
+    private FichaMedica fichaMedica;
+
+
+
+
+
+
+
 }
