@@ -14,8 +14,11 @@ public class FichaMedica {
     @GeneratedValue (strategy = IDENTITY)
     private Integer idFichaMedica;
 
+//    @OneToOne(mappedBy = "fichaMedica", fetch = FetchType.LAZY, optional = false)
+//    private Usuario usuario;
+
     @OneToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "idUsuario", nullable = false, unique = true)
+    @JoinColumn(name = "id_usuario", nullable = false, unique = true) // FK en ficha_medica
     private Usuario usuario;
 
 }
