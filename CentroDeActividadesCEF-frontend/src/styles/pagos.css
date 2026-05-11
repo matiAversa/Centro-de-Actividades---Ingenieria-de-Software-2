@@ -1,0 +1,66 @@
+.pagos-container {
+  padding: 40px;
+}
+
+.pagos-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+.pagos-header h2 {
+  color: #163F7A;
+  font-size: 34px;
+}
+
+.pagos-header button {
+  background: #D01F25;
+  color: white;
+  border: none;
+  padding: 14px 22px;
+  border-radius: 14px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.pagos-table {
+  width: 100%;
+  background: white;
+  border-radius: 20px;
+  overflow: hidden;
+  border-collapse: collapse;
+  box-shadow: 0 8px 20px rgba(0,0,0,.08);
+}
+
+.pagos-table th {
+  background: #163F7A;
+  color: white;
+  padding: 20px;
+}
+
+.pagos-table td {
+  padding: 20px;
+  border-bottom: 1px solid #eee;
+}
+
+.status {
+  padding: 8px 16px;
+  border-radius: 999px;
+  font-weight: bold;
+}
+
+.pagado {
+  background: #d4edda;
+  color: #1b5e20;
+}
+
+.pendiente {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.vencido {
+  background: #fdecea;
+  color: #b71c1c;
+}

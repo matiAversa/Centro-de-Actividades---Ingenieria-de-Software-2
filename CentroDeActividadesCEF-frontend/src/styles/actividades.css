@@ -1,0 +1,61 @@
+.actividades-container {
+  padding: 40px;
+}
+
+.actividades-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+.actividades-header h2 {
+  color: #163F7A;
+  font-size: 34px;
+}
+
+.actividades-header button {
+  background: #D01F25;
+  color: white;
+  border: none;
+  padding: 14px 22px;
+  border-radius: 14px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.actividades-table {
+  width: 100%;
+  background: white;
+  border-radius: 20px;
+  overflow: hidden;
+  border-collapse: collapse;
+  box-shadow: 0 8px 20px rgba(0,0,0,.08);
+}
+
+.actividades-table th {
+  background: #163F7A;
+  color: white;
+  padding: 20px;
+}
+
+.actividades-table td {
+  padding: 20px;
+  border-bottom: 1px solid #eee;
+}
+
+.status {
+  padding: 8px 16px;
+  border-radius: 999px;
+  font-weight: bold;
+}
+
+.available {
+  background: #d4edda;
+  color: #1b5e20;
+}
+
+.full {
+  background: #fdecea;
+  color: #b71c1c;
+}
