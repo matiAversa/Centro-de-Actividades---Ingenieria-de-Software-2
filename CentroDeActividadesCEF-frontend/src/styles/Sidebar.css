@@ -1,0 +1,47 @@
+.sidebar {
+  width: 230px;
+  height: 100vh;
+  background: #163F7A;
+  position: fixed;
+  left: 0;
+  top: 0;
+  padding: 30px 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.logo-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 45px;
+}
+
+.logo-image {
+  width: 140px;
+  height: auto;
+  object-fit: contain;
+}
+
+.menu {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.menu a {
+  text-decoration: none;
+  color: white;
+  padding: 16px 20px;
+  border-radius: 16px;
+  font-size: 18px;
+  font-weight: 600;
+  transition: 0.3s;
+}
+
+.menu a:hover {
+  background: rgba(255,255,255,.15);
+}
+
+.menu .active {
+  background: #D01F25;
+}

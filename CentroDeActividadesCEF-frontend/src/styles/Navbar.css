@@ -1,0 +1,46 @@
+.navbar {
+  height: 95px;
+  background: white;
+  padding: 0 45px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 4px solid #D01F25;
+}
+
+.navbar h1 {
+  color: #163F7A;
+  font-size: 38px;
+  margin-bottom: 4px;
+}
+
+.navbar span {
+  color: #6b7280;
+  font-size: 16px;
+}
+
+.user-box {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.avatar {
+  width: 52px;
+  height: 52px;
+  background: #D01F25;
+  border-radius: 50%;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+
+.user-box h4 {
+  color: #163F7A;
+}
+
+.user-box p {
+  color: #777;
+}
