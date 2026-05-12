@@ -63,6 +63,7 @@ public class UsuarioController {
     public ResponseEntity<String> eliminarPendiente (@RequestBody String mail){
         try {
             this.usuarioPendienteService.deleteWithCorreo(mail);
+            return ResponseEntity.status(HttpStatus.OK).body("se elimino el usuario pendiente");
         }catch(Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("error en endpoint '/verificado'");
         }

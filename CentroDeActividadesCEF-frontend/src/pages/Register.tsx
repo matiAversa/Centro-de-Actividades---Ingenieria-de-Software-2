@@ -3,13 +3,23 @@ import logo from "../assets/Logo.png";
 import "../styles/login.css";
 import "../styles/Register.css";
 
+const API_BASE_URL = import.meta.env.VITE_API_URL;
+
 function Register() {
     const navigate = useNavigate();
 
     const handleRegister = (e: React.FormEvent) => {
-
+        RegistrarUsuario;
         navigate("/VerficacionDeCodigo");
     };
+
+    async function RegistrarUsuario() {
+        const res = await fetch(`${API_BASE_URL}${"/User/validacion"}`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(body),
+        });
+    }
 
     const goToLogin = () => {
         navigate("/");
