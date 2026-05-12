@@ -5,6 +5,18 @@ import "../styles/Register.css";
 
 const API_BASE_URL = import.meta.env.VITE_API_URL;
 
+type UserDataType = {
+    nombre: string;
+    apellido: string;
+    dni: string;
+    telefono: string;
+    genero: "HOMBRE" | "MUJER" | ""; // ajustá si tu backend maneja otros valores
+    fechaNacimiento: string; // "YYYY-MM-DD"
+    correo: string;
+    password: string;
+    confirmPassword: string;
+};
+
 function Register() {
     const navigate = useNavigate();
 
@@ -14,10 +26,10 @@ function Register() {
     };
 
     async function RegistrarUsuario() {
-        const res = await fetch(`${API_BASE_URL}${"/User/validacion"}`, {
+        const res = await fetch(`${API_BASE_URL}/User/validacion`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(body),
+            body: JSON.stringify(UserDataType),
         });
     }
 
