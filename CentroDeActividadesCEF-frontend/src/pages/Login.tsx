@@ -9,6 +9,10 @@ function Login() {
     navigate("/dashboard");
   };
 
+  const handleSignin = () => {
+    navigate("/register")
+  };
+
   return (
     <div className="login-container">
       <div className="login-left">
@@ -49,6 +53,14 @@ function Login() {
             onClick={handleLogin}
           >
             Ingresar
+          </button>
+          <br />
+          <br />
+          <button
+            className="signin-btn"
+            onClick={handleSignin}
+          >
+            Registrarse
           </button>
         </div>
       </div>

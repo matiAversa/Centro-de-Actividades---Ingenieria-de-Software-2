@@ -21,4 +21,7 @@ public class Genero {
     private List<Usuario> personas = new ArrayList<>();
 
 
+    public String getNombreGenero() {
+        return nombreGenero;
+    }
 }

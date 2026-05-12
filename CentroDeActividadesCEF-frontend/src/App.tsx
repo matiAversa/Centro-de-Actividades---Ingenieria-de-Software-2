@@ -5,6 +5,8 @@ import Socios from "./pages/Socios";
 import Actividades from "./pages/Actividades";
 import Reservas from "./pages/Reservas";
 import Pagos from "./pages/Pagos";
+import Register from "./pages/Register";
+import VerificacionDeCodigo from "./pages/VerificacionDeCorreo";
 
 function App() {
   return (
@@ -16,6 +18,8 @@ function App() {
         <Route path="/actividades" element={<Actividades />} />
         <Route path="/reservas" element={<Reservas />} />
         <Route path="/pagos" element={<Pagos />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/VerficacionDeCodigo" element={<VerificacionDeCodigo />} />
       </Routes>
     </BrowserRouter>
   );

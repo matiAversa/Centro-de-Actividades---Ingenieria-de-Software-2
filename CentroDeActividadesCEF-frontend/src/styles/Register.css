@@ -1,0 +1,102 @@
+/* Register-only overrides (mantiene paleta porque reusa login.css) */
+
+.register-page.login-container {
+  height: auto;
+  min-height: 100vh;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+}
+
+.register-page .login-left {
+  min-height: 100vh;
+}
+
+.register-page .login-right {
+  align-items: flex-start; /* en lugar de center */
+  padding: 24px 0;
+  overflow-y: auto;        /* scroll dentro del panel derecho */
+  max-height: 100vh;
+}
+
+.register-page .login-card {
+  background: white;
+  width: 430px;
+  max-width: 520px;
+  padding: 24px;
+  border-radius: 28px;
+  box-shadow: 0 15px 35px rgba(0,0,0,.08);
+}
+
+.register-page .login-card h2 {
+  margin-bottom: 22px;
+  font-size: 30px;
+}
+
+.register-form .register-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px 16px;
+}
+
+.register-form .register-full {
+  grid-column: 1 / -1;
+}
+
+.register-page .input-group {
+  margin-bottom: 0; /* el espacio lo maneja el gap del grid */
+}
+
+.register-page .input-group label {
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+/* Input y select con mismo look + FIX de color de texto */
+.register-page .input-group input,
+.register-page .input-group select {
+  width: 100%;
+  padding: 10px 12px;
+  font-size: 14px;
+  border: 2px solid #d9d9d9;
+  border-radius: 12px;
+  outline: none;
+  background: #ffffff;
+
+  /* FIX: forzar color visible (evita herencias en blanco) */
+  color: #1b1b1b;
+}
+
+/* Placeholder visible */
+.register-page .input-group input::placeholder {
+  color: #6b6b6b;
+}
+
+/* En algunos navegadores, el select puede heredar color raro */
+.register-page .input-group select {
+  color: #1b1b1b;
+}
+
+/* Focus igual que login */
+.register-page .input-group input:focus,
+.register-page .input-group select:focus {
+  border-color: #163F7A;
+}
+
+/* Botones separados y compactos */
+.register-actions {
+  margin-top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+@media (max-width: 700px) {
+  .register-form .register-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .register-page .login-right {
+    padding: 16px 0;
+  }
+}
