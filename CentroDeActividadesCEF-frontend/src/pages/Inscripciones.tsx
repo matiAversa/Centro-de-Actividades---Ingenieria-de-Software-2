@@ -26,6 +26,20 @@ function Inscripciones() {
 
   const [socioId, setSocioId] = useState("");
   const [actividadId, setActividadId] = useState("");
+  const [search, setSearch] = useState("");
+
+  const [mensaje, setMensaje] = useState("");
+  const [tipoMensaje, setTipoMensaje] = useState<"success" | "error" | "">("");
+
+  const mostrarMensaje = (texto: string, tipo: "success" | "error") => {
+    setMensaje(texto);
+    setTipoMensaje(tipo);
+
+    setTimeout(() => {
+      setMensaje("");
+      setTipoMensaje("");
+    }, 3500);
+  };
 
   const cargarDatos = async () => {
     try {
@@ -41,6 +55,7 @@ function Inscripciones() {
       setInscripciones(inscripcionesData);
     } catch (error) {
       console.error("Error cargando datos:", error);
+      mostrarMensaje("No se pudieron cargar los datos", "error");
     }
   };
 
@@ -51,7 +66,19 @@ function Inscripciones() {
 
   const handleInscribir = async () => {
     if (!socioId || !actividadId) {
-      alert("Seleccioná un socio y una actividad");
+      mostrarMensaje("Seleccioná un socio y una actividad", "error");
+      return;
+    }
+
+    const actividadSeleccionada = actividades.find(
+      (actividad) => actividad.id === Number(actividadId)
+    );
+
+    if (actividadSeleccionada && actividadSeleccionada.cupos <= 0) {
+      mostrarMensaje(
+        "La actividad está completa. Más adelante se podrá agregar al socio a una cola de espera.",
+        "error"
+      );
       return;
     }
 
@@ -62,13 +89,15 @@ function Inscripciones() {
       setActividadId("");
 
       await cargarDatos();
+
+      mostrarMensaje("Inscripción creada correctamente", "success");
     } catch (error) {
       console.error("Error inscribiendo:", error);
 
       if (error instanceof Error) {
-        alert(error.message);
+        mostrarMensaje(error.message, "error");
       } else {
-        alert("No se pudo crear la inscripción");
+        mostrarMensaje("No se pudo crear la inscripción", "error");
       }
     }
   };
@@ -83,11 +112,24 @@ function Inscripciones() {
     try {
       await eliminarInscripcionApi(id);
       await cargarDatos();
+
+      mostrarMensaje("Inscripción cancelada correctamente", "success");
     } catch (error) {
       console.error("Error eliminando inscripción:", error);
-      alert("No se pudo cancelar la inscripción");
+      mostrarMensaje("No se pudo cancelar la inscripción", "error");
     }
   };
+
+  const inscripcionesFiltradas = inscripciones.filter((inscripcion) => {
+    const texto = `
+      ${inscripcion.socio?.nombre ?? ""}
+      ${inscripcion.socio?.email ?? ""}
+      ${inscripcion.actividad?.nombre ?? ""}
+      ${inscripcion.actividad?.horario ?? ""}
+    `.toLowerCase();
+
+    return texto.includes(search.toLowerCase());
+  });
 
   return (
     <Layout>
@@ -95,6 +137,12 @@ function Inscripciones() {
         <div className="socios-header">
           <h2>Inscripciones</h2>
         </div>
+
+        {mensaje && (
+          <div className={`message-box ${tipoMensaje}`}>
+            {mensaje}
+          </div>
+        )}
 
         <div className="form-row">
           <select
@@ -117,9 +165,14 @@ function Inscripciones() {
             <option value="">Seleccionar actividad</option>
 
             {actividades.map((actividad) => (
-              <option key={actividad.id} value={actividad.id}>
+              <option
+                key={actividad.id}
+                value={actividad.id}
+                disabled={actividad.cupos <= 0}
+              >
                 {actividad.nombre} - {actividad.horario} - Cupos:{" "}
                 {actividad.cupos}
+                {actividad.cupos <= 0 ? " (Completo)" : ""}
               </option>
             ))}
           </select>
@@ -128,6 +181,14 @@ function Inscripciones() {
             Inscribir
           </button>
         </div>
+
+        <input
+          className="search-input"
+          type="text"
+          placeholder="Buscar inscripción..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
 
         <table className="socios-table">
           <thead>
@@ -143,7 +204,7 @@ function Inscripciones() {
           </thead>
 
           <tbody>
-            {inscripciones.map((inscripcion) => (
+            {inscripcionesFiltradas.map((inscripcion) => (
               <tr key={inscripcion.id}>
                 <td>{inscripcion.id}</td>
                 <td>{inscripcion.socio?.nombre}</td>
