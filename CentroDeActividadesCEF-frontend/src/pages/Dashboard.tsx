@@ -1,8 +1,47 @@
+import { useEffect, useState } from "react";
 import Layout from "../components/Layout";
 import DashboardCard from "../components/DashboardCard";
 import "../styles/dashboard.css";
 
+import { obtenerSocios } from "../services/socioService";
+import { obtenerActividades } from "../services/actividadService";
+import { obtenerInscripciones } from "../services/inscripcionService";
+
 function Dashboard() {
+  const [sociosActivos, setSociosActivos] = useState(0);
+  const [actividades, setActividades] = useState(0);
+  const [inscripciones, setInscripciones] = useState(0);
+  const [actividadesCompletas, setActividadesCompletas] = useState(0);
+
+  const cargarResumen = async () => {
+    try {
+      const [sociosData, actividadesData, inscripcionesData] =
+        await Promise.all([
+          obtenerSocios(),
+          obtenerActividades(),
+          obtenerInscripciones(),
+        ]);
+
+      setSociosActivos(
+        sociosData.filter((socio) => socio.estado === "Activo").length
+      );
+
+      setActividades(actividadesData.length);
+      setInscripciones(inscripcionesData.length);
+
+      setActividadesCompletas(
+        actividadesData.filter((actividad) => actividad.cupos <= 0).length
+      );
+    } catch (error) {
+      console.error("Error cargando resumen:", error);
+    }
+  };
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    cargarResumen();
+  }, []);
+
   return (
     <Layout>
       <div className="dashboard-content">
@@ -11,22 +50,22 @@ function Dashboard() {
         <div className="cards-grid">
           <DashboardCard
             title="Socios Activos"
-            value="320"
+            value={String(sociosActivos)}
           />
 
           <DashboardCard
             title="Actividades"
-            value="18"
+            value={String(actividades)}
           />
 
           <DashboardCard
-            title="Reservas Hoy"
-            value="57"
+            title="Inscripciones"
+            value={String(inscripciones)}
           />
 
           <DashboardCard
-            title="Pagos Pendientes"
-            value="12"
+            title="Actividades Completas"
+            value={String(actividadesCompletas)}
           />
         </div>
       </div>
