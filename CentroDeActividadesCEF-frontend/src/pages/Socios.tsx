@@ -3,175 +3,103 @@ import Layout from "../components/Layout";
 import AddSocioModal from "../components/AddSocioModal";
 import "../styles/socios.css";
 
-type Socio = {
-  id: number;
-  nombre: string;
-  email: string;
-  telefono?: string;
-  fechaNacimiento?: string;
-  cuota: string;
-  estado: string;
-};
-
-const SOCIOS_INICIALES: Socio[] = [
-  {
-    id: 1,
-    nombre: "Juan Pérez",
-    email: "juan@email.com",
-    cuota: "Al día",
-    estado: "Activo",
-  },
-  {
-    id: 2,
-    nombre: "María Gómez",
-    email: "maria@email.com",
-    cuota: "Pendiente",
-    estado: "Activo",
-  },
-];
+import {
+  obtenerSocios,
+  crearSocio,
+  actualizarSocio,
+  eliminarSocioApi,
+  type Socio,
+} from "../services/socioService";
 
 function Socios() {
-  const [isModalOpen, setIsModalOpen] =
-    useState(false);
-
-  const [
-    socioSeleccionado,
-    setSocioSeleccionado,
-  ] = useState<Socio | null>(
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [socioSeleccionado, setSocioSeleccionado] = useState<Socio | null>(
     null
   );
+  const [search, setSearch] = useState("");
+  const [socios, setSocios] = useState<Socio[]>([]);
 
-  const [search, setSearch] =
-    useState("");
-
-  const [socios, setSocios] =
-    useState<Socio[]>(() => {
-      const saved =
-        localStorage.getItem(
-          "socios"
-        );
-
-      return saved
-        ? JSON.parse(saved)
-        : SOCIOS_INICIALES;
-    });
+  const cargarSocios = async () => {
+    try {
+      const data = await obtenerSocios();
+      setSocios(data);
+    } catch (error) {
+      console.error("Error cargando socios:", error);
+    }
+  };
 
   useEffect(() => {
-    localStorage.setItem(
-      "socios",
-      JSON.stringify(
-        socios
-      )
-    );
-  }, [socios]);
+    let mounted = true;
 
-  const guardarSocio = (
-    socio: Socio
-  ) => {
-    if (socio.id) {
-      setSocios(
-        socios.map((s) =>
-          s.id === socio.id
-            ? {
-                ...s,
-                ...socio,
-              }
-            : s
-        )
-      );
-    } else {
-      const nuevoSocio = {
-        id:
-          socios.length > 0
-            ? Math.max(
-                ...socios.map(
-                  (s) => s.id
-                )
-              ) + 1
-            : 1,
+    (async () => {
+      try {
+        const data = await obtenerSocios();
+        if (mounted) setSocios(data);
+      } catch (error) {
+        console.error("Error cargando socios:", error);
+      }
+    })();
 
-        nombre:
-          socio.nombre,
+    return () => {
+      mounted = false;
+    };
+  }, []);
 
-        email:
-          socio.email,
+  const guardarSocio = async (socio: Socio) => {
+    try {
+      if (socio.id) {
+        await actualizarSocio(socio.id, socio);
+      } else {
+        await crearSocio({
+          nombre: socio.nombre,
+          email: socio.email,
+          telefono: socio.telefono,
+          fechaNacimiento: socio.fechaNacimiento,
+          cuota: "Pendiente",
+          estado: "Activo",
+        });
+      }
 
-        telefono:
-          socio.telefono,
-
-        fechaNacimiento:
-          socio.fechaNacimiento,
-
-        cuota:
-          "Pendiente",
-
-        estado:
-          "Activo",
-      };
-
-      setSocios([
-        ...socios,
-        nuevoSocio,
-      ]);
+      await cargarSocios();
+      setSocioSeleccionado(null);
+      setIsModalOpen(false);
+    } catch (error) {
+      console.error("Error guardando socio:", error);
     }
-
-    setSocioSeleccionado(
-      null
-    );
   };
 
-  const eliminarSocio = (
-    id: number
-  ) => {
-    const confirmar =
-      window.confirm(
-        "¿Eliminar socio?"
-      );
+  const eliminarSocio = async (id?: number) => {
+    if (!id) return;
 
-    if (!confirmar)
-      return;
+    const confirmar = window.confirm("¿Eliminar socio?");
 
-    setSocios(
-      socios.filter(
-        (s) =>
-          s.id !== id
-      )
-    );
+    if (!confirmar) return;
+
+    try {
+      await eliminarSocioApi(id);
+      await cargarSocios();
+    } catch (error) {
+      console.error("Error eliminando socio:", error);
+    }
   };
 
-  const sociosFiltrados =
-    socios.filter(
-      (socio) =>
-        socio.nombre
-          .toLowerCase()
-          .includes(
-            search.toLowerCase()
-          ) ||
-        socio.email
-          .toLowerCase()
-          .includes(
-            search.toLowerCase()
-          )
-    );
+  const sociosFiltrados = socios.filter(
+    (socio) =>
+      socio.nombre.toLowerCase().includes(search.toLowerCase()) ||
+      socio.email.toLowerCase().includes(search.toLowerCase())
+  );
 
   return (
     <Layout>
       <div className="socios-container">
         <div className="socios-header">
-          <h2>
-            Gestión de Socios
-          </h2>
+          <h2>Gestión de Socios</h2>
 
           <button
             className="add-socio-btn"
             onClick={() => {
-              setSocioSeleccionado(
-                null
-              );
-
-              setIsModalOpen(
-                true
-              );
+              setSocioSeleccionado(null);
+              setIsModalOpen(true);
             }}
           >
             + Agregar socio
@@ -183,11 +111,7 @@ function Socios() {
           type="text"
           placeholder="Buscar socio..."
           value={search}
-          onChange={(e) =>
-            setSearch(
-              e.target.value
-            )
-          }
+          onChange={(e) => setSearch(e.target.value)}
         />
 
         <table className="socios-table">
@@ -198,105 +122,62 @@ function Socios() {
               <th>Email</th>
               <th>Cuota</th>
               <th>Estado</th>
-              <th>
-                Acciones
-              </th>
+              <th>Acciones</th>
             </tr>
           </thead>
 
           <tbody>
-            {sociosFiltrados.map(
-              (socio) => (
-                <tr
-                  key={socio.id}
-                >
-                  <td>
-                    {socio.id}
-                  </td>
-
-                  <td>
-                    {
-                      socio.nombre
+            {sociosFiltrados.map((socio) => (
+              <tr key={socio.id}>
+                <td>{socio.id}</td>
+                <td>{socio.nombre}</td>
+                <td>{socio.email}</td>
+                <td>{socio.cuota}</td>
+                <td>
+                  <span
+                    className={
+                      socio.estado === "Activo"
+                        ? "status active"
+                        : "status inactive"
                     }
-                  </td>
+                  >
+                    {socio.estado}
+                  </span>
+                </td>
 
-                  <td>
-                    {
-                      socio.email
-                    }
-                  </td>
-
-                  <td>
-                    {
-                      socio.cuota
-                    }
-                  </td>
-
-                  <td>
-                    <span
-                      className={
-                        socio.estado ===
-                        "Activo"
-                          ? "status active"
-                          : "status inactive"
-                      }
+                <td>
+                  <div className="actions">
+                    <button
+                      className="edit-btn"
+                      onClick={() => {
+                        setSocioSeleccionado(socio);
+                        setIsModalOpen(true);
+                      }}
                     >
-                      {
-                        socio.estado
-                      }
-                    </span>
-                  </td>
+                      ✏️
+                    </button>
 
-                  <td>
-                    <div className="actions">
-                      <button
-                        className="edit-btn"
-                        onClick={() => {
-                          setSocioSeleccionado(
-                            socio
-                          );
-
-                          setIsModalOpen(
-                            true
-                          );
-                        }}
-                      >
-                        ✏️
-                      </button>
-
-                      <button
-                        className="delete-btn"
-                        onClick={() =>
-                          eliminarSocio(
-                            socio.id
-                          )
-                        }
-                      >
-                        🗑️
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              )
-            )}
+                    <button
+                      className="delete-btn"
+                      onClick={() => eliminarSocio(socio.id)}
+                    >
+                      🗑️
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            ))}
           </tbody>
         </table>
 
         <AddSocioModal
-          isOpen={
-            isModalOpen
-          }
-          onClose={() =>
-            setIsModalOpen(
-              false
-            )
-          }
-          onSaveSocio={(socio: unknown) =>
-            guardarSocio(socio as Socio)
-          }
-          socioToEdit={
-            socioSeleccionado
-          }
+          isOpen={isModalOpen}
+          onClose={() => {
+            setIsModalOpen(false);
+            setSocioSeleccionado(null);
+          }}
+          onSaveSocio={(socio: unknown) => guardarSocio(socio as Socio)}
+          socioToEdit={socioSeleccionado}
         />
       </div>
     </Layout>
