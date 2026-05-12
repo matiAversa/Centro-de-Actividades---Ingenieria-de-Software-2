@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Layout from "../components/Layout";
 import "../styles/socios.css";
 
@@ -41,7 +41,7 @@ function Inscripciones() {
     }, 3500);
   };
 
-  const cargarDatos = async () => {
+  const cargarDatos = useCallback(async () => {
     try {
       const [sociosData, actividadesData, inscripcionesData] =
         await Promise.all([
@@ -57,12 +57,12 @@ function Inscripciones() {
       console.error("Error cargando datos:", error);
       mostrarMensaje("No se pudieron cargar los datos", "error");
     }
-  };
+  }, []);
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     cargarDatos();
-  }, []);
+  }, [cargarDatos]);
 
   const handleInscribir = async () => {
     if (!socioId || !actividadId) {
