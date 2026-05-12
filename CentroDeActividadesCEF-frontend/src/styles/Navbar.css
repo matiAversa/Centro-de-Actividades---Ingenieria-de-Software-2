@@ -1,46 +1,71 @@
 .navbar {
-  height: 95px;
-  background: white;
-  padding: 0 45px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-bottom: 4px solid #D01F25;
+	height: 95px;
+	background: white;
+	padding: 0 45px;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	border-bottom: 4px solid #d01f25;
 }
 
 .navbar h1 {
-  color: #163F7A;
-  font-size: 38px;
-  margin-bottom: 4px;
+	color: #163f7a;
+	font-size: 38px;
+	margin-bottom: 4px;
 }
 
 .navbar span {
-  color: #6b7280;
-  font-size: 16px;
+	color: #6b7280;
+	font-size: 16px;
 }
 
 .user-box {
-  display: flex;
-  align-items: center;
-  gap: 14px;
+	display: flex;
+	align-items: center;
+	gap: 14px;
 }
 
 .avatar {
-  width: 52px;
-  height: 52px;
-  background: #D01F25;
-  border-radius: 50%;
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: bold;
+	width: 52px;
+	height: 52px;
+	background: #d01f25;
+	border-radius: 50%;
+	color: white;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-weight: bold;
 }
 
 .user-box h4 {
-  color: #163F7A;
+	color: #163f7a;
 }
 
 .user-box p {
-  color: #777;
+	color: #777;
+}
+
+.logout-btn {
+	background: linear-gradient(135deg, #d01f25 0%, #a01820 100%);
+	border: none;
+	color: white;
+	font-size: 14px;
+	font-weight: 600;
+	cursor: pointer;
+	padding: 8px 16px;
+	border-radius: 6px;
+	transition: all 0.3s ease;
+	box-shadow: 0 2px 8px rgba(208, 31, 37, 0.3);
+	letter-spacing: 0.5px;
+}
+
+.logout-btn:hover {
+	background: linear-gradient(135deg, #a01820 0%, #7d1419 100%);
+	box-shadow: 0 4px 12px rgba(208, 31, 37, 0.5);
+	transform: translateY(-2px);
+}
+
+.logout-btn:active {
+	transform: translateY(0);
+	box-shadow: 0 2px 4px rgba(208, 31, 37, 0.4);
 }
