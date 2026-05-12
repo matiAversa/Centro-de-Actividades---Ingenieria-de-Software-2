@@ -11,6 +11,7 @@ import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import Socios from "./pages/Socios";
 import Actividades from "./pages/Actividades";
+import Inscripciones from "./pages/Inscripciones";
 import Reservas from "./pages/Reservas";
 import Pagos from "./pages/Pagos";
 
@@ -62,6 +63,15 @@ function App() {
           element={
             <ProtectedRoute allowedRole="ADMIN">
               <Actividades />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/inscripciones"
+          element={
+            <ProtectedRoute allowedRole="ADMIN">
+              <Inscripciones />
             </ProtectedRoute>
           }
         />
@@ -133,9 +143,7 @@ function App() {
         {/* fallback */}
         <Route
           path="*"
-          element={
-            <Navigate to="/" />
-          }
+          element={<Navigate to="/" />}
         />
       </Routes>
     </BrowserRouter>
