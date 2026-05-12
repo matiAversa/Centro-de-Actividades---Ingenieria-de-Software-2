@@ -1,32 +1,143 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Layout from "../components/Layout";
 import AddActividadModal from "../components/AddActividadModal";
-import { useApp } from "../context/useApp";
 import "../styles/actividades.css";
 
-function Actividades() {
-  const {
-    actividades,
-    guardarActividad,
-    eliminarActividad,
-  } = useApp();
+import {
+  obtenerActividades,
+  crearActividad,
+  actualizarActividad,
+  eliminarActividadApi,
+  type Actividad,
+} from "../services/actividadService";
 
+type ActividadFormulario = Omit<Actividad, "id"> & {
+  id?: string | number;
+};
+
+function Actividades() {
   const [isModalOpen, setIsModalOpen] =
     useState(false);
 
   const [
     actividadSeleccionada,
     setActividadSeleccionada,
-  ] = useState<
-    (typeof actividades)[number] | null
-  >(null);
+  ] = useState<ActividadFormulario | null>(
+    null
+  );
 
   const [search, setSearch] =
     useState("");
 
+  const [
+    actividades,
+    setActividades,
+  ] = useState<Actividad[]>([]);
+
+  const cargarActividades =
+    async () => {
+      try {
+        const data =
+          await obtenerActividades();
+
+        setActividades(
+          data
+        );
+      } catch (error) {
+        console.error(
+          "Error cargando actividades:",
+          error
+        );
+      }
+    };
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    void cargarActividades();
+  }, []);
+
+  const guardarActividad =
+    async (
+      actividad: ActividadFormulario
+    ) => {
+      const actividadServicio: Actividad = {
+        ...actividad,
+        id:
+          typeof actividad.id === "string"
+            ? Number(actividad.id)
+            : actividad.id,
+      };
+
+      try {
+        if (
+          actividadServicio.id
+        ) {
+          await actualizarActividad(
+            actividadServicio.id,
+            actividadServicio
+          );
+        } else {
+          await crearActividad(
+            {
+              nombre: actividadServicio.nombre,
+              profesor: actividadServicio.profesor,
+              horario: actividadServicio.horario,
+              cupos: actividadServicio.cupos,
+            }
+          );
+        }
+
+        await cargarActividades();
+
+        setActividadSeleccionada(
+          null
+        );
+
+        setIsModalOpen(
+          false
+        );
+      } catch (error) {
+        console.error(
+          "Error guardando actividad:",
+          error
+        );
+      }
+    };
+
+  const eliminarActividad =
+    async (
+      id?: number
+    ) => {
+      if (!id)
+        return;
+
+      const confirmar =
+        window.confirm(
+          "¿Eliminar actividad?"
+        );
+
+      if (!confirmar)
+        return;
+
+      try {
+        await eliminarActividadApi(
+          id
+        );
+
+        await cargarActividades();
+      } catch (error) {
+        console.error(
+          "Error eliminando actividad:",
+          error
+        );
+      }
+    };
+
   const actividadesFiltradas =
     actividades.filter(
-      (actividad) =>
+      (
+        actividad
+      ) =>
         actividad.nombre
           .toLowerCase()
           .includes(
@@ -197,27 +308,22 @@ function Actividades() {
           isOpen={
             isModalOpen
           }
-          onClose={() =>
+          onClose={() => {
             setIsModalOpen(
               false
-            )
-          }
-          onSaveActividad={(
-            actividad
-          ) => {
-            guardarActividad(
-              {
-                ...actividad,
-                id: Number(
-                  actividad.id
-                ),
-              }
             );
 
-            setIsModalOpen(
-              false
+            setActividadSeleccionada(
+              null
             );
           }}
+          onSaveActividad={(
+            actividad
+          ) =>
+            guardarActividad(
+              actividad
+            )
+          }
           actividadToEdit={
             actividadSeleccionada
           }
