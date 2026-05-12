@@ -1,12 +1,52 @@
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import logo from "../assets/Logo.png";
+import { useAuth } from "../context/useAuth";
 import "../styles/login.css";
 
 function Login() {
-  const navigate = useNavigate();
+  const navigate =
+    useNavigate();
+
+  const { login } =
+    useAuth();
+
+  const [email, setEmail] =
+    useState("");
+
+  const [
+    password,
+    setPassword,
+  ] = useState("");
+
+  const [error, setError] =
+    useState("");
 
   const handleLogin = () => {
-    navigate("/dashboard");
+    const user =
+      login(
+        email,
+        password
+      );
+
+    if (!user) {
+      setError(
+        "Credenciales incorrectas"
+      );
+      return;
+    }
+
+    if (
+      user.role ===
+      "ADMIN"
+    ) {
+      navigate(
+        "/dashboard"
+      );
+      return;
+    }
+
+    navigate("/home");
   };
 
   return (
@@ -18,35 +58,80 @@ function Login() {
           className="login-logo"
         />
 
-        <h1>Centro de Actividades</h1>
+        <h1>
+          Centro de Actividades
+        </h1>
+
         <p>
-          Sistema de Gestión Integral
+          Sistema de Gestión
+          Integral
         </p>
       </div>
 
       <div className="login-right">
         <div className="login-card">
-          <h2>Iniciar Sesión</h2>
+          <h2>
+            Iniciar Sesión
+          </h2>
 
           <div className="input-group">
-            <label>Email</label>
+            <label>
+              Email
+            </label>
+
             <input
               type="email"
               placeholder="ejemplo@email.com"
+              value={email}
+              onChange={(
+                e
+              ) =>
+                setEmail(
+                  e.target.value
+                )
+              }
             />
           </div>
 
           <div className="input-group">
-            <label>Contraseña</label>
+            <label>
+              Contraseña
+            </label>
+
             <input
               type="password"
               placeholder="********"
+              value={
+                password
+              }
+              onChange={(
+                e
+              ) =>
+                setPassword(
+                  e.target.value
+                )
+              }
             />
           </div>
 
+          {error && (
+            <p
+              style={{
+                color:
+                  "#D01F25",
+                marginBottom:
+                  "12px",
+              }}
+            >
+              {error}
+            </p>
+          )}
+
           <button
             className="login-btn"
-            onClick={handleLogin}
+            onClick={
+              handleLogin
+            }
           >
             Ingresar
           </button>

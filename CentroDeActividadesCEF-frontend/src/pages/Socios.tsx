@@ -1,4 +1,4 @@
-import { useState, type ComponentProps } from "react";
+import { useEffect, useState } from "react";
 import Layout from "../components/Layout";
 import AddSocioModal from "../components/AddSocioModal";
 import "../styles/socios.css";
@@ -12,6 +12,23 @@ type Socio = {
   cuota: string;
   estado: string;
 };
+
+const SOCIOS_INICIALES: Socio[] = [
+  {
+    id: 1,
+    nombre: "Juan Pérez",
+    email: "juan@email.com",
+    cuota: "Al día",
+    estado: "Activo",
+  },
+  {
+    id: 2,
+    nombre: "María Gómez",
+    email: "maria@email.com",
+    cuota: "Pendiente",
+    estado: "Activo",
+  },
+];
 
 function Socios() {
   const [isModalOpen, setIsModalOpen] =
@@ -28,26 +45,29 @@ function Socios() {
     useState("");
 
   const [socios, setSocios] =
-    useState<Socio[]>([
-      {
-        id: 1,
-        nombre: "Juan Pérez",
-        email: "juan@email.com",
-        cuota: "Al día",
-        estado: "Activo",
-      },
-      {
-        id: 2,
-        nombre: "María Gómez",
-        email: "maria@email.com",
-        cuota: "Pendiente",
-        estado: "Activo",
-      },
-    ]);
+    useState<Socio[]>(() => {
+      const saved =
+        localStorage.getItem(
+          "socios"
+        );
 
-  const guardarSocio: ComponentProps<
-    typeof AddSocioModal
-  >["onSaveSocio"] = (socio) => {
+      return saved
+        ? JSON.parse(saved)
+        : SOCIOS_INICIALES;
+    });
+
+  useEffect(() => {
+    localStorage.setItem(
+      "socios",
+      JSON.stringify(
+        socios
+      )
+    );
+  }, [socios]);
+
+  const guardarSocio = (
+    socio: Socio
+  ) => {
     if (socio.id) {
       setSocios(
         socios.map((s) =>
@@ -62,17 +82,29 @@ function Socios() {
     } else {
       const nuevoSocio = {
         id:
-          socios.length + 1,
+          socios.length > 0
+            ? Math.max(
+                ...socios.map(
+                  (s) => s.id
+                )
+              ) + 1
+            : 1,
+
         nombre:
           socio.nombre,
+
         email:
           socio.email,
+
         telefono:
           socio.telefono,
+
         fechaNacimiento:
           socio.fechaNacimiento,
+
         cuota:
           "Pendiente",
+
         estado:
           "Activo",
       };
@@ -96,11 +128,13 @@ function Socios() {
         "¿Eliminar socio?"
       );
 
-    if (!confirmar) return;
+    if (!confirmar)
+      return;
 
     setSocios(
       socios.filter(
-        (s) => s.id !== id
+        (s) =>
+          s.id !== id
       )
     );
   };
@@ -164,7 +198,9 @@ function Socios() {
               <th>Email</th>
               <th>Cuota</th>
               <th>Estado</th>
-              <th>Acciones</th>
+              <th>
+                Acciones
+              </th>
             </tr>
           </thead>
 
@@ -255,8 +291,8 @@ function Socios() {
               false
             )
           }
-          onSaveSocio={
-            guardarSocio
+          onSaveSocio={(socio: unknown) =>
+            guardarSocio(socio as Socio)
           }
           socioToEdit={
             socioSeleccionado
