@@ -4,13 +4,12 @@ import {
   useState,
 } from "react";
 
-type UserRole =
-  | "ADMIN"
-  | "SOCIO";
+type UserRole = "ADMIN" | "SOCIO";
 
 type User = {
   email: string;
   role: UserRole;
+  socioId?: number;
 };
 
 type AuthContextType = {
@@ -35,23 +34,15 @@ export const AuthProvider = ({
   children: React.ReactNode;
 }) => {
   const [user, setUser] =
-    useState<User | null>(
-      null
-    );
+    useState<User | null>(null);
 
   useEffect(() => {
     const savedUser =
-      localStorage.getItem(
-        "user"
-      );
+      localStorage.getItem("user");
 
     if (savedUser) {
       // eslint-disable-next-line react-hooks/set-state-in-effect
-      setUser(
-        JSON.parse(
-          savedUser
-        )
-      );
+      setUser(JSON.parse(savedUser));
     }
   }, []);
 
@@ -59,57 +50,45 @@ export const AuthProvider = ({
     email: string,
     password: string
   ): User | null => {
-    let loggedUser:
-      | User
-      | null = null;
+    let loggedUser: User | null = null;
 
     if (
-      email ===
-        "admin@cef.com" &&
+      email === "admin@cef.com" &&
       password === "1234"
     ) {
       loggedUser = {
         email,
-        role:
-          "ADMIN",
+        role: "ADMIN",
       };
     }
 
     if (
-      email ===
-        "usuario@cef.com" &&
+      email === "usuario@cef.com" &&
       password === "1234"
     ) {
       loggedUser = {
         email,
-        role:
-          "SOCIO",
+        role: "SOCIO",
+        socioId: 1,
       };
     }
 
-    if (
-      loggedUser
-    ) {
-      setUser(
-        loggedUser
-      );
+    if (loggedUser) {
+      setUser(loggedUser);
 
       localStorage.setItem(
         "user",
-        JSON.stringify(
-          loggedUser
-        )
+        JSON.stringify(loggedUser)
       );
     }
 
     return loggedUser;
   };
 
-const logout = () => {
-  setUser(null);
-
-  localStorage.clear();
-};
+  const logout = () => {
+    setUser(null);
+    localStorage.clear();
+  };
 
   return (
     <AuthContext.Provider
