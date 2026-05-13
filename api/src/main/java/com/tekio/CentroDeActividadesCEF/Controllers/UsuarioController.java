@@ -9,11 +9,9 @@ import com.tekio.CentroDeActividadesCEF.Services.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+@CrossOrigin(origins = "http://localhost:5173")
 @RestController
 @RequestMapping ("/User")
 public class UsuarioController {
@@ -30,8 +28,8 @@ public class UsuarioController {
         this.usuarioPendienteService = usuarioPendienteService;
     }
 
-    @PostMapping("/validacion")
-    public ResponseEntity<String> validacion(@RequestBody SignUpRequest body){
+    @PostMapping("/EnvioDeCodigo")
+    public ResponseEntity<String> EnvioDeCodigo(@RequestBody SignUpRequest body){
         try {
         if (!body.ValidarDatos()){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error en alguna validacion de datos");
@@ -41,22 +39,32 @@ public class UsuarioController {
         }
         VerificationCode generadorCodigo = new VerificationCode();
         String codigoCorreo = generadorCodigo.generarCodigoCorreo();
+        this.usuarioPendienteService.almacenarUsuario(body, codigoCorreo);
         this.emailService.sendVerificationCode(body.getCorreo(), codigoCorreo);
-        this.usuarioPendienteService.almacenarUsuario(body);
-        return ResponseEntity.status(HttpStatus.OK).body(new MailConCodigo(body.getCorreo(), codigoCorreo).toString());
+        return ResponseEntity.status(HttpStatus.OK).body(body.getCorreo());
         }catch(Exception e){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("error en endpoint '/verificado'");
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("error en endpoint '/EnvioDeCodigo'");
         }
     }
 
-    @PostMapping("/verficado")
-    public ResponseEntity<String> verificado (@RequestBody String mail){
-        try {
-            this.usuarioService.almacenarUsuario(this.usuarioPendienteService.getUsusarioWithCorreo(mail));
-            return ResponseEntity.status(HttpStatus.OK).body("usuario guardado correctamente");
-        }catch(Exception e){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("error en endpoint '/verificado'");
+    @PostMapping("/ValidarCodigo")
+    public ResponseEntity<String> ValidarCodigo  (@RequestBody MailConCodigo body){
+
+        try{
+            if (this.usuarioPendienteService.validarCodigo (body)){
+                this.usuarioService.almacenarUsuario(this.usuarioPendienteService.getUsusarioWithCorreo(body.getCorreo()));
+                this.usuarioPendienteService.deleteWithCorreo(body.getCorreo());
+                return ResponseEntity.status(HttpStatus.OK).body("");
+            }else{
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("el codigo enviado no es correcto");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("error en endpoint '/ValidarCodigo'");
+
         }
+
     }
 
     @PostMapping("/eliminarPendiente")
@@ -65,6 +73,7 @@ public class UsuarioController {
             this.usuarioPendienteService.deleteWithCorreo(mail);
             return ResponseEntity.status(HttpStatus.OK).body("se elimino el usuario pendiente");
         }catch(Exception e){
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("error en endpoint '/verificado'");
         }
     }
