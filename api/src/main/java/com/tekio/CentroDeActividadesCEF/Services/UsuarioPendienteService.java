@@ -12,6 +12,8 @@ import com.tekio.CentroDeActividadesCEF.Repositories.UsuarioPendienteRepository;
 import com.tekio.CentroDeActividadesCEF.Repositories.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 
 import java.util.Optional;
 
@@ -59,6 +61,20 @@ public class UsuarioPendienteService {
             return true;
         }
         return false;
+    }
+
+    @Transactional
+    public void borrarPendiente(String mail){
+        this.usuarioPendienteRepository.deleteByCorreo(mail);
+
+    }
+
+    public void actualizarCodigo(String correo, String nuevoCodigoCorreo){
+
+        UsuarioPendiente up = this.usuarioPendienteRepository.findByCorreo(correo);
+        up.actualizarCodigo(nuevoCodigoCorreo);
+        this.usuarioPendienteRepository.save(up);
+
     }
 
 }
