@@ -39,3 +39,10 @@
   background: gray;
   cursor: not-allowed;
 }
+
+.warning-text {
+  color: #b45309;
+  font-size: 14px;
+  margin-top: 8px;
+  margin-bottom: 8px;
+}

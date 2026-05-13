@@ -31,6 +31,11 @@ public class SocioService {
         return socioRepository.save(socio);
     }
 
+    public Socio obtenerPorId(Long id) {
+        return socioRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Socio no encontrado"));
+    }
+
     public Socio actualizar(Long id, Socio datos) {
         Socio socio = socioRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Socio no encontrado"));

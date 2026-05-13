@@ -22,30 +22,26 @@ function UserSidebar() {
 
       <nav className="menu">
         <Link
-          className={isActive(
-            "/home"
-          )}
+          className={isActive("/home")}
           to="/home"
         >
           Inicio
         </Link>
 
         <Link
-          className={isActive(
-            "/clases"
-          )}
+          className={isActive("/clases")}
           to="/clases"
         >
-          Actividades
+          Clases
         </Link>
 
         <Link
           className={isActive(
-            "/mis-reservas"
+            "/mis-inscripciones"
           )}
-          to="/mis-reservas"
+          to="/mis-inscripciones"
         >
-          Mis Reservas
+          Mis Inscripciones
         </Link>
 
         <Link
