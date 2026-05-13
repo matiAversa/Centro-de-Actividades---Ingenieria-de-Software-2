@@ -1,0 +1,30 @@
+.spinner-wrap {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+}
+
+.spinner-wrap.centered {
+	padding: 18px 0;
+}
+
+.spinner {
+	border-radius: 50%;
+	border: 4px solid rgba(0, 0, 0, 0.08);
+	border-top-color: #0b5fff;
+	animation: spin 0.9s linear infinite;
+	box-sizing: border-box;
+}
+
+.spinner-message {
+	font-size: 0.95rem;
+	color: #333;
+}
+
+@keyframes spin {
+	to {
+		transform: rotate(360deg);
+	}
+}
