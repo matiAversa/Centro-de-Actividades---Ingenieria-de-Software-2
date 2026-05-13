@@ -6,34 +6,37 @@ import { useAuth } from "../context/useAuth";
 interface Actividad {
   id: number;
   nombre: string;
+}
+
+interface Clase {
+  id: number;
+  fecha: string;
+  horaInicio: string;
+  horaFin: string;
   profesor: string;
-  horario: string;
-  cupos: number;
+  cupoMaximo: number;
+  cuposDisponibles: number;
+  estado: string;
+  actividad: Actividad;
 }
 
 interface Socio {
   id: number;
-  nombre: string;
 }
 
 interface Inscripcion {
   id: number;
   socio: Socio;
-  actividad: Actividad;
+  clase: Clase;
   fechaInscripcion: string;
 }
 
 function Clases() {
-  const [actividades, setActividades] =
-    useState<Actividad[]>([]);
-
-  const [inscripciones, setInscripciones] =
-    useState<Inscripcion[]>([]);
-
-  const [loading, setLoading] =
-    useState(true);
-
-  const [inscribiendoId, setInscribiendoId] =
+  const [clases, setClases] = useState<Clase[]>([]);
+  const [inscripciones, setInscripciones] = useState<Inscripcion[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [inscribiendoId, setInscribiendoId] = useState<number | null>(null);
+  const [inscribiendoMensualId, setInscribiendoMensualId] =
     useState<number | null>(null);
 
   const { user } = useAuth();
@@ -48,132 +51,106 @@ function Clases() {
     try {
       setLoading(true);
 
-      const [
-        actividadesResponse,
-        inscripcionesResponse,
-      ] = await Promise.all([
-        fetch(
-          "http://localhost:8080/api/actividades"
-        ),
-        fetch(
-          "http://localhost:8080/api/inscripciones"
-        ),
+      const [clasesResponse, inscripcionesResponse] = await Promise.all([
+        fetch("http://localhost:8080/api/clases/proximas"),
+        fetch("http://localhost:8080/api/inscripciones"),
       ]);
 
-      if (!actividadesResponse.ok) {
-        throw new Error(
-          "Error al obtener actividades"
-        );
+      if (!clasesResponse.ok) {
+        throw new Error("Error al obtener clases");
       }
 
       if (!inscripcionesResponse.ok) {
-        throw new Error(
-          "Error al obtener inscripciones"
-        );
+        throw new Error("Error al obtener inscripciones");
       }
 
-      const actividadesData: Actividad[] =
-        await actividadesResponse.json();
-
+      const clasesData: Clase[] = await clasesResponse.json();
       const inscripcionesData: Inscripcion[] =
         await inscripcionesResponse.json();
 
-      setActividades(actividadesData);
+      setClases(clasesData);
       setInscripciones(inscripcionesData);
     } catch (error) {
       console.error(error);
-      alert(
-        "No se pudieron cargar las clases disponibles"
-      );
+      alert("No se pudieron cargar las clases");
     } finally {
       setLoading(false);
     }
   };
 
-  const estaInscripto = (
-    actividadId: number
-  ) => {
+  const estaInscripto = (claseId: number) => {
     return inscripciones.some(
       (inscripcion) =>
         inscripcion.socio.id === socioId &&
-        inscripcion.actividad.id ===
-          actividadId
+        inscripcion.clase?.id === claseId
     );
   };
 
-  const tieneHorarioOcupado = (
-    actividad: Actividad
-  ) => {
+  const tieneHorarioOcupado = (clase: Clase) => {
     return inscripciones.some(
       (inscripcion) =>
         inscripcion.socio.id === socioId &&
-        inscripcion.actividad.horario.toLowerCase() ===
-          actividad.horario.toLowerCase() &&
-        inscripcion.actividad.id !==
-          actividad.id
+        inscripcion.clase?.fecha === clase.fecha &&
+        inscripcion.clase?.horaInicio === clase.horaInicio &&
+        inscripcion.clase?.id !== clase.id
     );
   };
 
-  const obtenerTextoBoton = (
-    actividad: Actividad
-  ) => {
-    if (inscribiendoId === actividad.id) {
-      return "Inscribiendo...";
-    }
+  const puedeInscribirse = (clase: Clase) => {
+    return (
+      clase.cuposDisponibles > 0 &&
+      !estaInscripto(clase.id) &&
+      !tieneHorarioOcupado(clase) &&
+      inscribiendoId !== clase.id
+    );
+  };
 
-    if (estaInscripto(actividad.id)) {
-      return "Ya inscripto";
-    }
-
-    if (tieneHorarioOcupado(actividad)) {
-      return "Horario ocupado";
-    }
-
-    if (actividad.cupos === 0) {
-      return "Completo";
-    }
+  const obtenerTextoBoton = (clase: Clase) => {
+    if (inscribiendoId === clase.id) return "Inscribiendo...";
+    if (estaInscripto(clase.id)) return "Inscripto ✓";
+    if (tieneHorarioOcupado(clase)) return "Horario ocupado";
+    if (clase.cuposDisponibles === 0) return "Completo";
 
     return "Inscribirme";
   };
 
-  const puedeInscribirse = (
-    actividad: Actividad
-  ) => {
-    return (
-      actividad.cupos > 0 &&
-      !estaInscripto(actividad.id) &&
-      !tieneHorarioOcupado(actividad) &&
-      inscribiendoId !== actividad.id
-    );
+  const obtenerInicioMes = (fecha: string) => {
+    const date = new Date(`${fecha}T00:00:00`);
+    const year = date.getFullYear();
+    const month = date.getMonth() + 1;
+
+    return `${year}-${String(month).padStart(2, "0")}-01`;
   };
 
-  const inscribirse = async (
-    actividadId: number
-  ) => {
+  const obtenerFinMes = (fecha: string) => {
+    const date = new Date(`${fecha}T00:00:00`);
+    const year = date.getFullYear();
+    const month = date.getMonth();
+
+    const finMes = new Date(year, month + 1, 0);
+
+    return `${finMes.getFullYear()}-${String(
+      finMes.getMonth() + 1
+    ).padStart(2, "0")}-${String(finMes.getDate()).padStart(2, "0")}`;
+  };
+
+  const inscribirse = async (claseId: number) => {
     try {
-      setInscribiendoId(actividadId);
+      setInscribiendoId(claseId);
 
       const response = await fetch(
-        `http://localhost:8080/api/inscripciones?socioId=${socioId}&actividadId=${actividadId}`,
+        `http://localhost:8080/api/inscripciones?socioId=${socioId}&claseId=${claseId}`,
         {
           method: "POST",
         }
       );
 
       if (!response.ok) {
-        const mensaje =
-          await response.text();
-
-        throw new Error(
-          mensaje ||
-            "No se pudo realizar la inscripción"
-        );
+        const mensaje = await response.text();
+        throw new Error(mensaje || "No se pudo realizar la inscripción");
       }
 
-      alert(
-        "Inscripción realizada correctamente"
-      );
-
+      alert("Inscripción realizada correctamente");
       cargarDatos();
     } catch (error) {
       console.error(error);
@@ -181,83 +158,162 @@ function Clases() {
       if (error instanceof Error) {
         alert(error.message);
       } else {
-        alert(
-          "Error al inscribirse"
-        );
+        alert("Error al inscribirse");
       }
     } finally {
       setInscribiendoId(null);
     }
   };
 
-    if (!socioId) {
-      return (
-        <UserLayout>
-          <p>Error al obtener el usuario.</p>
-        </UserLayout>
+  const inscribirseAlMes = async (clase: Clase) => {
+    const confirmar = window.confirm(
+      `¿Querés inscribirte al mes completo de ${clase.actividad?.nombre}?`
+    );
+
+    if (!confirmar) return;
+
+    try {
+      setInscribiendoMensualId(clase.id);
+
+      const response = await fetch(
+        "http://localhost:8080/api/inscripciones/mensual",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            socioId,
+            actividadId: clase.actividad.id,
+            fechaInicio: obtenerInicioMes(clase.fecha),
+            fechaFin: obtenerFinMes(clase.fecha),
+          }),
+        }
       );
+
+      if (!response.ok) {
+        const mensaje = await response.text();
+        throw new Error(mensaje || "No se pudo realizar la inscripción mensual");
+      }
+
+      alert("Inscripción mensual realizada correctamente");
+      cargarDatos();
+    } catch (error) {
+      console.error(error);
+
+      if (error instanceof Error) {
+        alert(error.message);
+      } else {
+        alert("Error al inscribirse al mes");
+      }
+    } finally {
+      setInscribiendoMensualId(null);
     }
+  };
+
+  const formatearFecha = (fecha: string) => {
+    const date = new Date(`${fecha}T00:00:00`);
+
+    return date.toLocaleDateString("es-AR", {
+      weekday: "long",
+      day: "2-digit",
+      month: "2-digit",
+    });
+  };
+
+  const clasesAgrupadas = clases.reduce<Record<string, Clase[]>>(
+    (grupos, clase) => {
+      if (!grupos[clase.fecha]) {
+        grupos[clase.fecha] = [];
+      }
+
+      grupos[clase.fecha].push(clase);
+      return grupos;
+    },
+    {}
+  );
+
+  const fechasOrdenadas = Object.keys(clasesAgrupadas).sort();
+
+  if (!socioId) {
+    return (
+      <UserLayout>
+        <p>Error al obtener el usuario.</p>
+      </UserLayout>
+    );
+  }
 
   return (
     <UserLayout>
       <div className="dashboard-content">
-        <h2>Clases disponibles</h2>
+        <h2>Calendario de clases</h2>
 
         {loading ? (
           <p>Cargando clases...</p>
+        ) : fechasOrdenadas.length === 0 ? (
+          <p>No hay clases disponibles.</p>
         ) : (
-          <div className="clases-grid">
-            {actividades.map((actividad) => (
-              <div
-                key={actividad.id}
-                className="clase-card"
-              >
-                <h3>{actividad.nombre}</h3>
+          <div className="calendario-clases">
+            {fechasOrdenadas.map((fecha) => (
+              <section key={fecha} className="dia-clases">
+                <h3>{formatearFecha(fecha)}</h3>
 
-                <p>
-                  <strong>Profesor:</strong>{" "}
-                  {actividad.profesor}
-                </p>
-
-                <p>
-                  <strong>Horario:</strong>{" "}
-                  {actividad.horario}
-                </p>
-
-                <p>
-                  <strong>Cupos:</strong>{" "}
-                  {actividad.cupos}
-                </p>
-
-                {tieneHorarioOcupado(
-                  actividad
-                ) &&
-                  !estaInscripto(
-                    actividad.id
-                  ) && (
-                    <p className="warning-text">
-                      Ya tenés una clase en este
-                      horario.
-                    </p>
-                  )}
-
-                <button
-                  disabled={
-                    !puedeInscribirse(
-                      actividad
+                <div className="clases-grid">
+                  {clasesAgrupadas[fecha]
+                    .sort((a, b) =>
+                      a.horaInicio.localeCompare(b.horaInicio)
                     )
-                  }
-                  onClick={() =>
-                    inscribirse(
-                      actividad.id
-                    )
-                  }
-                >
-                  {obtenerTextoBoton(
-                    actividad
-                  )}
-                </button>
-              </div>
+                    .map((clase) => (
+                      <div key={clase.id} className="clase-card">
+                        <h4>{clase.actividad?.nombre}</h4>
+
+                        <p>
+                          <strong>Profesor:</strong> {clase.profesor}
+                        </p>
+
+                        <p>
+                          <strong>Horario:</strong>{" "}
+                          {clase.horaInicio.slice(0, 5)} -{" "}
+                          {clase.horaFin.slice(0, 5)}
+                        </p>
+
+                        <p>
+                          <strong>Cupos:</strong> {clase.cuposDisponibles}/
+                          {clase.cupoMaximo}
+                        </p>
+
+                        {tieneHorarioOcupado(clase) &&
+                          !estaInscripto(clase.id) && (
+                            <p className="warning-text">
+                              Ya tenés una clase en ese horario.
+                            </p>
+                          )}
+
+                        <div className="class-actions">
+                          <button
+                            disabled={!puedeInscribirse(clase)}
+                            onClick={() => inscribirse(clase.id)}
+                          >
+                            {obtenerTextoBoton(clase)}
+                          </button>
+
+                          <button
+                            className="secondary-btn"
+                            disabled={
+                              inscribiendoMensualId === clase.id ||
+                              estaInscripto(clase.id)
+                            }
+                            onClick={() => inscribirseAlMes(clase)}
+                          >
+                            {inscribiendoMensualId === clase.id
+                              ? "Inscribiendo mes..."
+                              : "Inscribirme al mes"}
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                </div>
+              </section>
             ))}
           </div>
         )}

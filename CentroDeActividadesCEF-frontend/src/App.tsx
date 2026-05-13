@@ -9,6 +9,7 @@ import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import Socios from "./pages/Socios";
 import Actividades from "./pages/Actividades";
+import CalendarioAdmin from "./pages/CalendarioAdmin";
 import Inscripciones from "./pages/Inscripciones";
 import Reservas from "./pages/Reservas";
 import Pagos from "./pages/Pagos";
@@ -29,10 +30,7 @@ function App() {
     <BrowserRouter>
       <Routes>
         {/* LOGIN */}
-        <Route
-          path="/"
-          element={<Login />}
-        />
+        <Route path="/" element={<Login />} />
 
         <Route
           path="/login"
@@ -73,6 +71,15 @@ function App() {
           element={
             <ProtectedRoute allowedRole="ADMIN">
               <Actividades />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/calendario"
+          element={
+            <ProtectedRoute allowedRole="ADMIN">
+              <CalendarioAdmin />
             </ProtectedRoute>
           }
         />
@@ -150,7 +157,7 @@ function App() {
           }
         />
 
-        {/* fallback */}
+        {/* FALLBACK */}
         <Route
           path="*"
           element={<Navigate to="/" />}

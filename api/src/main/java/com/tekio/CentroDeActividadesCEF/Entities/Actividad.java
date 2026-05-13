@@ -1,8 +1,10 @@
 package com.tekio.CentroDeActividadesCEF.Entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
+
+import java.util.List;
 
 @Entity
 @Table(name = "actividades")
@@ -15,24 +17,25 @@ public class Actividad {
     @NotBlank
     private String nombre;
 
-    @NotBlank
-    private String profesor;
+    private String descripcion;
 
-    @NotBlank
-    private String horario;
+    private Boolean activo = true;
 
-    @Min(0)
-    private Integer cupos;
+    @OneToMany(mappedBy = "actividad", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private List<Clase> clases;
 
     public Actividad() {
     }
 
-    public Actividad(Long id, String nombre, String profesor, String horario, Integer cupos) {
+    public Actividad(Long id,
+            String nombre,
+            String descripcion,
+            Boolean activo) {
         this.id = id;
         this.nombre = nombre;
-        this.profesor = profesor;
-        this.horario = horario;
-        this.cupos = cupos;
+        this.descripcion = descripcion;
+        this.activo = activo;
     }
 
     public Long getId() {
@@ -43,16 +46,16 @@ public class Actividad {
         return nombre;
     }
 
-    public String getProfesor() {
-        return profesor;
+    public String getDescripcion() {
+        return descripcion;
     }
 
-    public String getHorario() {
-        return horario;
+    public Boolean getActivo() {
+        return activo;
     }
 
-    public Integer getCupos() {
-        return cupos;
+    public List<Clase> getClases() {
+        return clases;
     }
 
     public void setId(Long id) {
@@ -63,15 +66,15 @@ public class Actividad {
         this.nombre = nombre;
     }
 
-    public void setProfesor(String profesor) {
-        this.profesor = profesor;
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
     }
 
-    public void setHorario(String horario) {
-        this.horario = horario;
+    public void setActivo(Boolean activo) {
+        this.activo = activo;
     }
 
-    public void setCupos(Integer cupos) {
-        this.cupos = cupos;
+    public void setClases(List<Clase> clases) {
+        this.clases = clases;
     }
 }

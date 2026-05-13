@@ -4,40 +4,47 @@ import com.tekio.CentroDeActividadesCEF.DTO.SignUpRequest;
 import com.tekio.CentroDeActividadesCEF.Entities.Usuario;
 import com.tekio.CentroDeActividadesCEF.Entities.UsuarioPendiente;
 import com.tekio.CentroDeActividadesCEF.Repositories.UsuarioPendienteRepository;
-import com.tekio.CentroDeActividadesCEF.Repositories.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-
+@Service
 public class UsuarioPendienteService {
 
-
-    private UsuarioPendienteRepository usuarioPendienteRepository;
-
+    private final UsuarioPendienteRepository usuarioPendienteRepository;
 
     @Autowired
-    public UsuarioPendienteService (UsuarioPendienteRepository usuarioPendienteRepository){
+    public UsuarioPendienteService(
+            UsuarioPendienteRepository usuarioPendienteRepository) {
         this.usuarioPendienteRepository = usuarioPendienteRepository;
     }
 
     public boolean existeEmail(String email) {
-        if (email == null) return false;
+        if (email == null)
+            return false;
+
         String normalized = email.trim().toLowerCase();
-        return usuarioPendienteRepository.existsByCorreo(normalized);
+
+        return usuarioPendienteRepository
+                .existsByCorreo(normalized);
     }
 
-    public void almacenarUsuario (SignUpRequest datos){
-        this.usuarioPendienteRepository.save(new UsuarioPendiente(datos));
+    public void almacenarUsuario(
+            SignUpRequest datos) {
+        this.usuarioPendienteRepository.save(
+                new UsuarioPendiente(datos));
     }
 
-    public Usuario getUsusarioWithCorreo (String mail){
+    public Usuario getUsusarioWithCorreo(
+            String mail) {
+        UsuarioPendiente up = this.usuarioPendienteRepository
+                .findByCorreo(mail);
 
-        UsuarioPendiente up = this.usuarioPendienteRepository.findByCorreo(mail);
         return up.pendienteAUsuario();
     }
 
-    public void deleteWithCorreo (String mail){
-        this.usuarioPendienteRepository.deleteByCorreo(mail);
+    public void deleteWithCorreo(
+            String mail) {
+        this.usuarioPendienteRepository
+                .deleteByCorreo(mail);
     }
-
 }
