@@ -1,14 +1,14 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
 import Login from "./pages/Login";
-
-/* ADMIN */
 import Dashboard from "./pages/Dashboard";
 import Socios from "./pages/Socios";
 import Actividades from "./pages/Actividades";
 import Inscripciones from "./pages/Inscripciones";
 import Reservas from "./pages/Reservas";
 import Pagos from "./pages/Pagos";
+import Register from "./pages/Register";
+import VerficacionDeCodigo from "./pages/VerificacionDeCorreo";
 
 /* USER */
 import Home from "./pages/Home";
@@ -18,6 +18,7 @@ import MisPagos from "./pages/MisPagos";
 import Perfil from "./pages/Perfil";
 
 import ProtectedRoute from "./components/ProtectedRoute";
+
 
 function App() {
 	return (
@@ -82,6 +83,9 @@ function App() {
 						</ProtectedRoute>
 					}
 				/>
+
+				<Route path="/Register" element={<Register />} />
+				<Route path="/VerficacionDeCodigo" element={<VerficacionDeCodigo />} />
 
 				{/* USER */}
 				<Route
