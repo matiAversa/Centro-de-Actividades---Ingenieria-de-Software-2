@@ -5,8 +5,8 @@ import {
   Navigate,
 } from "react-router-dom";
 
-import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
+import Dashboard from "./pages/Dashboard";
 import Socios from "./pages/Socios";
 import Actividades from "./pages/Actividades";
 import Inscripciones from "./pages/Inscripciones";
@@ -29,8 +29,15 @@ function App() {
     <BrowserRouter>
       <Routes>
         {/* LOGIN */}
-        <Route path="/" element={<Login />} />
-        <Route path="/login" element={<Login />} />
+        <Route
+          path="/"
+          element={<Login />}
+        />
+
+        <Route
+          path="/login"
+          element={<Login />}
+        />
 
         <Route
           path="/Register"

@@ -1,336 +1,209 @@
 import { useEffect, useState } from "react";
 import Layout from "../components/Layout";
 import AddActividadModal from "../components/AddActividadModal";
+import Spinner from "../components/Spinner";
 import "../styles/actividades.css";
 
 import {
-  obtenerActividades,
-  crearActividad,
-  actualizarActividad,
-  eliminarActividadApi,
-  type Actividad,
+	obtenerActividades,
+	crearActividad,
+	actualizarActividad,
+	eliminarActividadApi,
+	type Actividad,
 } from "../services/actividadService";
 
 type ActividadFormulario = Omit<Actividad, "id"> & {
-  id?: string | number;
+	id?: string | number;
 };
 
 function Actividades() {
-  const [isModalOpen, setIsModalOpen] =
-    useState(false);
+	const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const [
-    actividadSeleccionada,
-    setActividadSeleccionada,
-  ] = useState<ActividadFormulario | null>(
-    null
-  );
+	const [actividadSeleccionada, setActividadSeleccionada] =
+		useState<ActividadFormulario | null>(null);
 
-  const [search, setSearch] =
-    useState("");
+	const [search, setSearch] = useState("");
 
-  const [
-    actividades,
-    setActividades,
-  ] = useState<Actividad[]>([]);
+	const [actividades, setActividades] = useState<Actividad[]>([]);
 
-  const cargarActividades =
-    async () => {
-      try {
-        const data =
-          await obtenerActividades();
+	const cargarActividades = async () => {
+		setLoading(true);
+		try {
+			const data = await obtenerActividades();
 
-        setActividades(
-          data
-        );
-      } catch (error) {
-        console.error(
-          "Error cargando actividades:",
-          error
-        );
-      }
-    };
+			setActividades(data);
+		} catch (error) {
+			console.error("Error cargando actividades:", error);
+		} finally {
+			setLoading(false);
+		}
+	};
 
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    void cargarActividades();
-  }, []);
+	useEffect(() => {
+		// eslint-disable-next-line react-hooks/set-state-in-effect
+		void cargarActividades();
+	}, []);
 
-  const guardarActividad =
-    async (
-      actividad: ActividadFormulario
-    ) => {
-      const actividadServicio: Actividad = {
-        ...actividad,
-        id:
-          typeof actividad.id === "string"
-            ? Number(actividad.id)
-            : actividad.id,
-      };
+	const [loading, setLoading] = useState(false);
 
-      try {
-        if (
-          actividadServicio.id
-        ) {
-          await actualizarActividad(
-            actividadServicio.id,
-            actividadServicio
-          );
-        } else {
-          await crearActividad(
-            {
-              nombre: actividadServicio.nombre,
-              profesor: actividadServicio.profesor,
-              horario: actividadServicio.horario,
-              cupos: actividadServicio.cupos,
-            }
-          );
-        }
+	const guardarActividad = async (actividad: ActividadFormulario) => {
+		const actividadServicio: Actividad = {
+			...actividad,
+			id:
+				typeof actividad.id === "string" ? Number(actividad.id) : actividad.id,
+		};
 
-        await cargarActividades();
+		try {
+			if (actividadServicio.id) {
+				await actualizarActividad(actividadServicio.id, actividadServicio);
+			} else {
+				await crearActividad({
+					nombre: actividadServicio.nombre,
+					profesor: actividadServicio.profesor,
+					horario: actividadServicio.horario,
+					cupos: actividadServicio.cupos,
+				});
+			}
 
-        setActividadSeleccionada(
-          null
-        );
+			await cargarActividades();
 
-        setIsModalOpen(
-          false
-        );
-      } catch (error) {
-        console.error(
-          "Error guardando actividad:",
-          error
-        );
-      }
-    };
+			setActividadSeleccionada(null);
 
-  const eliminarActividad =
-    async (
-      id?: number
-    ) => {
-      if (!id)
-        return;
+			setIsModalOpen(false);
+		} catch (error) {
+			console.error("Error guardando actividad:", error);
+		}
+	};
 
-      const confirmar =
-        window.confirm(
-          "¿Eliminar actividad?"
-        );
+	const eliminarActividad = async (id?: number) => {
+		if (!id) return;
 
-      if (!confirmar)
-        return;
+		const confirmar = window.confirm("¿Eliminar actividad?");
 
-      try {
-        await eliminarActividadApi(
-          id
-        );
+		if (!confirmar) return;
 
-        await cargarActividades();
-      } catch (error) {
-        console.error(
-          "Error eliminando actividad:",
-          error
-        );
-      }
-    };
+		try {
+			await eliminarActividadApi(id);
 
-  const actividadesFiltradas =
-    actividades.filter(
-      (
-        actividad
-      ) =>
-        actividad.nombre
-          .toLowerCase()
-          .includes(
-            search.toLowerCase()
-          ) ||
-        actividad.profesor
-          .toLowerCase()
-          .includes(
-            search.toLowerCase()
-          )
-    );
+			await cargarActividades();
+		} catch (error) {
+			console.error("Error eliminando actividad:", error);
+		}
+	};
 
-  return (
-    <Layout>
-      <div className="socios-container">
-        <div className="socios-header">
-          <h2>
-            Gestión de
-            Actividades
-          </h2>
+	const actividadesFiltradas = actividades.filter(
+		(actividad) =>
+			actividad.nombre.toLowerCase().includes(search.toLowerCase()) ||
+			actividad.profesor.toLowerCase().includes(search.toLowerCase()),
+	);
 
-          <button
-            className="add-socio-btn"
-            onClick={() => {
-              setActividadSeleccionada(
-                null
-              );
+	return (
+		<Layout>
+			<div className="socios-container">
+				<div className="socios-header">
+					<h2>Gestión de Actividades</h2>
 
-              setIsModalOpen(
-                true
-              );
-            }}
-          >
-            + Agregar
-            actividad
-          </button>
-        </div>
+					<button
+						className="add-socio-btn"
+						onClick={() => {
+							setActividadSeleccionada(null);
 
-        <input
-          className="search-input"
-          type="text"
-          placeholder="Buscar actividad..."
-          value={search}
-          onChange={(e) =>
-            setSearch(
-              e.target.value
-            )
-          }
-        />
+							setIsModalOpen(true);
+						}}
+					>
+						+ Agregar actividad
+					</button>
+				</div>
 
-        <table className="socios-table">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>
-                Actividad
-              </th>
-              <th>
-                Profesor
-              </th>
-              <th>
-                Horario
-              </th>
-              <th>
-                Cupos
-              </th>
-              <th>
-                Estado
-              </th>
-              <th>
-                Acciones
-              </th>
-            </tr>
-          </thead>
+				<input
+					className="search-input"
+					type="text"
+					placeholder="Buscar actividad..."
+					value={search}
+					onChange={(e) => setSearch(e.target.value)}
+				/>
 
-          <tbody>
-            {actividadesFiltradas.map(
-              (
-                actividad
-              ) => (
-                <tr
-                  key={
-                    actividad.id
-                  }
-                >
-                  <td>
-                    {
-                      actividad.id
-                    }
-                  </td>
+				{loading ? (
+					<Spinner message="Cargando actividades..." />
+				) : (
+					<table className="socios-table">
+						<thead>
+							<tr>
+								<th>ID</th>
+								<th>Actividad</th>
+								<th>Profesor</th>
+								<th>Horario</th>
+								<th>Cupos</th>
+								<th>Estado</th>
+								<th>Acciones</th>
+							</tr>
+						</thead>
 
-                  <td>
-                    {
-                      actividad.nombre
-                    }
-                  </td>
+						<tbody>
+							{actividadesFiltradas.map((actividad) => (
+								<tr key={actividad.id}>
+									<td>{actividad.id}</td>
 
-                  <td>
-                    {
-                      actividad.profesor
-                    }
-                  </td>
+									<td>{actividad.nombre}</td>
 
-                  <td>
-                    {
-                      actividad.horario
-                    }
-                  </td>
+									<td>{actividad.profesor}</td>
 
-                  <td>
-                    {
-                      actividad.cupos
-                    }
-                  </td>
+									<td>{actividad.horario}</td>
 
-                  <td>
-                    <span
-                      className={
-                        actividad.cupos >
-                        0
-                          ? "status active"
-                          : "status inactive"
-                      }
-                    >
-                      {actividad.cupos >
-                      0
-                        ? "Disponible"
-                        : "Completo"}
-                    </span>
-                  </td>
+									<td>{actividad.cupos}</td>
 
-                  <td>
-                    <div className="actions">
-                      <button
-                        className="edit-btn"
-                        onClick={() => {
-                          setActividadSeleccionada(
-                            actividad
-                          );
+									<td>
+										<span
+											className={
+												actividad.cupos > 0
+													? "status active"
+													: "status inactive"
+											}
+										>
+											{actividad.cupos > 0 ? "Disponible" : "Completo"}
+										</span>
+									</td>
 
-                          setIsModalOpen(
-                            true
-                          );
-                        }}
-                      >
-                        ✏️
-                      </button>
+									<td>
+										<div className="actions">
+											<button
+												className="edit-btn"
+												onClick={() => {
+													setActividadSeleccionada(actividad);
 
-                      <button
-                        className="delete-btn"
-                        onClick={() =>
-                          eliminarActividad(
-                            actividad.id
-                          )
-                        }
-                      >
-                        🗑️
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              )
-            )}
-          </tbody>
-        </table>
+													setIsModalOpen(true);
+												}}
+											>
+												✏️
+											</button>
 
-        <AddActividadModal
-          isOpen={
-            isModalOpen
-          }
-          onClose={() => {
-            setIsModalOpen(
-              false
-            );
+											<button
+												className="delete-btn"
+												onClick={() => eliminarActividad(actividad.id)}
+											>
+												🗑️
+											</button>
+										</div>
+									</td>
+								</tr>
+							))}
+						</tbody>
+					</table>
+				)}
 
-            setActividadSeleccionada(
-              null
-            );
-          }}
-          onSaveActividad={(
-            actividad
-          ) =>
-            guardarActividad(
-              actividad
-            )
-          }
-          actividadToEdit={
-            actividadSeleccionada
-          }
-        />
-      </div>
-    </Layout>
-  );
+				<AddActividadModal
+					isOpen={isModalOpen}
+					onClose={() => {
+						setIsModalOpen(false);
+
+						setActividadSeleccionada(null);
+					}}
+					onSaveActividad={(actividad) => guardarActividad(actividad)}
+					actividadToEdit={actividadSeleccionada}
+				/>
+			</div>
+		</Layout>
+	);
 }
 
 export default Actividades;

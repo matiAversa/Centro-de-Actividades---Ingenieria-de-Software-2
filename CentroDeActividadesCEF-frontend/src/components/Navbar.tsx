@@ -3,71 +3,63 @@ import { useAuth } from "../context/useAuth";
 import "../styles/Navbar.css";
 
 function Navbar() {
-  const navigate =
-    useNavigate();
+	const navigate = useNavigate();
 
-  const {
-    user,
-    logout,
-  } = useAuth();
+	const { user, logout } = useAuth();
 
-  const handleLogout =
-    () => {
-      logout();
+	const avatarInitial = user?.email?.charAt(0).toUpperCase() ?? "U";
 
-      navigate(
-        "/login"
-      );
-    };
+	const handleLogout = () => {
+		logout();
 
-  return (
-    <header className="navbar">
-      <div className="navbar-left">
-        <h1>
-          Centro de
-          Actividades
-        </h1>
+		navigate("/login");
+	};
 
-        <p>
-          Sistema de
-          Gestión
-        </p>
-      </div>
+	const handleGoToProfile = () => {
+		navigate("/perfil");
+	};
 
-      <div className="navbar-right">
-        <div className="user-avatar">
-          {user?.email
-            ?.charAt(0)
-            .toUpperCase()}
-        </div>
+	return (
+		<header className="navbar">
+			<div className="navbar-brand">
+				<p className="navbar-kicker">Portal de gestión</p>
 
-        <div className="user-info">
-          <h3>
-            {user?.role ===
-            "ADMIN"
-              ? "Administrador"
-              : user?.email}
-          </h3>
+				<div>
+					<h1>Centro de Actividades</h1>
 
-          <p>
-            {user?.role ===
-            "ADMIN"
-              ? "Panel de control"
-              : "Portal socio"}
-          </p>
-        </div>
+					<p>Sistema de gestión deportiva</p>
+				</div>
+			</div>
 
-        <button
-          className="logout-btn"
-          onClick={
-            handleLogout
-          }
-        >
-          Salir
-        </button>
-      </div>
-    </header>
-  );
+			<div className="navbar-right">
+				<div className="user-avatar">{avatarInitial}</div>
+
+				<div className="user-info">
+					<h3>{user?.role === "ADMIN" ? "Administrador" : user?.email}</h3>
+
+					<p>{user?.role === "ADMIN" ? "Panel de control" : "Portal socio"}</p>
+				</div>
+
+				<div className="navbar-actions">
+					<span className="user-role-pill">
+						{user?.role === "ADMIN" ? "Admin" : "Socio"}
+					</span>
+
+					<button
+						className="profile-btn"
+						type="button"
+						onClick={handleGoToProfile}
+					>
+						<span className="profile-btn-label">Mi perfil</span>
+					</button>
+
+					<button className="logout-btn" type="button" onClick={handleLogout}>
+						Cerrar sesión
+					</button>
+				</div>
+			</div>
+		</header>
+	);
 }
 
 export default Navbar;
