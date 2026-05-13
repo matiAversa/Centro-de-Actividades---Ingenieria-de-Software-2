@@ -180,3 +180,26 @@ body {
     grid-template-columns: 1fr;
   }
 }
+
+.estado-pago {
+  display: inline-block;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.estado-pago.pendiente {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.estado-pago.pagada {
+  background: #d4edda;
+  color: #155724;
+}
+
+.estado-pago.cancelada {
+  background: #f8d7da;
+  color: #721c24;
+}
