@@ -5,20 +5,20 @@ import {
   Navigate,
 } from "react-router-dom";
 
-import Login from "./pages/Login";
-
-/* ADMIN */
 import Dashboard from "./pages/Dashboard";
+import Login from "./pages/Login";
 import Socios from "./pages/Socios";
 import Actividades from "./pages/Actividades";
 import Inscripciones from "./pages/Inscripciones";
 import Reservas from "./pages/Reservas";
 import Pagos from "./pages/Pagos";
+import Register from "./pages/Register";
+import VerficacionDeCodigo from "./pages/VerificacionDeCorreo";
 
 /* USER */
 import Home from "./pages/Home";
 import Clases from "./pages/Clases";
-import MisReservas from "./pages/MisInscripciones";
+import MisInscripciones from "./pages/MisInscripciones";
 import MisPagos from "./pages/MisPagos";
 import Perfil from "./pages/Perfil";
 
@@ -29,14 +29,17 @@ function App() {
     <BrowserRouter>
       <Routes>
         {/* LOGIN */}
+        <Route path="/" element={<Login />} />
+        <Route path="/login" element={<Login />} />
+
         <Route
-          path="/"
-          element={<Login />}
+          path="/Register"
+          element={<Register />}
         />
 
         <Route
-          path="/login"
-          element={<Login />}
+          path="/VerficacionDeCodigo"
+          element={<VerficacionDeCodigo />}
         />
 
         {/* ADMIN */}
@@ -117,7 +120,7 @@ function App() {
           path="/mis-inscripciones"
           element={
             <ProtectedRoute allowedRole="SOCIO">
-              <MisReservas />
+              <MisInscripciones />
             </ProtectedRoute>
           }
         />
