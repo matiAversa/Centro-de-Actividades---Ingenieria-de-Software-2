@@ -23,6 +23,11 @@ public class SocioController {
         return socioService.obtenerTodos();
     }
 
+    @GetMapping("/{id}")
+    public Socio obtenerPorId(@PathVariable Long id) {
+        return socioService.obtenerPorId(id);
+    }
+
     @PostMapping
     public Socio crear(@Validated @RequestBody Socio socio) {
         return socioService.crear(socio);

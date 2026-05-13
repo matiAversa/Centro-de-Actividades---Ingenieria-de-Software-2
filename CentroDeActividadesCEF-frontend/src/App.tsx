@@ -18,7 +18,7 @@ import Pagos from "./pages/Pagos";
 /* USER */
 import Home from "./pages/Home";
 import Clases from "./pages/Clases";
-import MisReservas from "./pages/MisReservas";
+import MisReservas from "./pages/MisInscripciones";
 import MisPagos from "./pages/MisPagos";
 import Perfil from "./pages/Perfil";
 
@@ -114,7 +114,7 @@ function App() {
         />
 
         <Route
-          path="/mis-reservas"
+          path="/mis-inscripciones"
           element={
             <ProtectedRoute allowedRole="SOCIO">
               <MisReservas />
