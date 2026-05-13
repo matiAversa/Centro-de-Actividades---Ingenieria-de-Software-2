@@ -47,8 +47,10 @@ public class Usuario {
     @OneToOne(mappedBy = "usuario", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private FichaMedica fichaMedica;
 
+    public Usuario() {
+    }
 
-    public Usuario(String nombre, String apellido, String dni, String fechaNacimiento, Genero genero, String telefono, String correo, String contrasena) {
+    public Usuario(String nombre, String apellido, String dni, String fechaNacimiento, Genero genero, String telefono, String correo, String contrasena, Rol rol) {
         this.nombre = nombre;
         this.apellido = apellido;
         this.dni = dni;
@@ -57,6 +59,7 @@ public class Usuario {
         this.telefono = telefono;
         this.correo = correo;
         this.contrasena = contrasena;
+        this.rol = rol;
     }
 
     public void normalizarDatos(){

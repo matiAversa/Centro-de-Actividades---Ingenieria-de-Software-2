@@ -10,10 +10,10 @@ public class SignUpRequest {
     private String telefono;
     private String correo;
     private String contrasena;
-    private Genero genero;          // o Integer generoId
+    private Integer genero;          // o Integer generoId
     private String fechaNacimiento;
 
-    public SignUpRequest(String nombre, String apellido, String dni, String telefono, String correo, String contrasena, Genero genero, String fechaNacimiento) {
+    public SignUpRequest(String nombre, String apellido, String dni, String telefono, String correo, String contrasena, Integer genero, String fechaNacimiento) {
         this.nombre = nombre;
         this.apellido = apellido;
         this.dni = dni;
@@ -72,11 +72,11 @@ public class SignUpRequest {
         this.contrasena = contrasena;
     }
 
-    public Genero getGenero() {
+    public Integer getGenero() {
         return genero;
     }
 
-    public void setGenero(Genero genero) {
+    public void setGenero(Integer genero) {
         this.genero = genero;
     }
 

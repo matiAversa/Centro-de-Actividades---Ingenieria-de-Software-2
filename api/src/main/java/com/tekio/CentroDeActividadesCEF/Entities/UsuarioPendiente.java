@@ -23,9 +23,7 @@ public class UsuarioPendiente {
     private String fechaNacimiento; // formato DD/MM/AAAA
 
     @NotNull
-    @ManyToOne
-    @JoinColumn(name = "idGenero", nullable = false)
-    private Genero genero;
+    private Integer genero;
 
     @NotNull
     private String telefono;
@@ -36,9 +34,14 @@ public class UsuarioPendiente {
     @NotNull
     private String contrasena;
 
+    @NotNull
+    private String codigo;
 
 
-    public UsuarioPendiente(String nombre, String apellido, String dni, String fechaNacimiento, Genero genero, String telefono, String correo, String contrasena) {
+    public UsuarioPendiente() {
+    }
+
+    public UsuarioPendiente(String nombre, String apellido, String dni, String fechaNacimiento, Integer genero, String telefono, String correo, String contrasena) {
         this.nombre = nombre;
         this.apellido = apellido;
         this.dni = dni;
@@ -49,7 +52,7 @@ public class UsuarioPendiente {
         this.contrasena = contrasena;
     }
 
-    public UsuarioPendiente (SignUpRequest datos){
+    public UsuarioPendiente (SignUpRequest datos, String codigo){
 
             this.apellido = datos.getApellido();
             this.dni = datos.getDni();
@@ -59,11 +62,20 @@ public class UsuarioPendiente {
             this.correo = datos.getCorreo();
             this.fechaNacimiento = datos.getFechaNacimiento();
             this.telefono = datos.getTelefono();
+            this.codigo = codigo;
 
     }
 
-    public Usuario pendienteAUsuario (){
-        Usuario u = new Usuario(nombre, apellido, dni, fechaNacimiento, genero, telefono, correo, contrasena);
+    public String getCodigo (){
+        return this.codigo;
+    }
+
+    public Integer getGenero (){
+        return this.genero;
+    }
+
+    public Usuario pendienteAUsuario (Genero genero, Rol rol){
+        Usuario u = new Usuario(nombre, apellido, dni, fechaNacimiento, genero, telefono, correo, contrasena, rol);
         u.normalizarDatos();
         return u;
     }
