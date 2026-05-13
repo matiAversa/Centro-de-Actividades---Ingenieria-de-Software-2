@@ -24,12 +24,11 @@ interface Inscripcion {
   id: number;
   clase: Clase;
   fechaInscripcion?: string;
+  estadoPago?: string;
 }
 
 function MisInscripciones() {
-  const [inscripciones, setInscripciones] =
-    useState<Inscripcion[]>([]);
-
+  const [inscripciones, setInscripciones] = useState<Inscripcion[]>([]);
   const [loading, setLoading] = useState(true);
 
   const { user } = useAuth();
@@ -43,20 +42,14 @@ function MisInscripciones() {
         );
 
         if (!response.ok) {
-          throw new Error(
-            "Error al obtener inscripciones"
-          );
+          throw new Error("Error al obtener inscripciones");
         }
 
-        const data: Inscripcion[] =
-          await response.json();
-
+        const data: Inscripcion[] = await response.json();
         setInscripciones(data);
       } catch (error) {
         console.error(error);
-        alert(
-          "No se pudieron cargar tus inscripciones"
-        );
+        alert("No se pudieron cargar tus inscripciones");
       } finally {
         setLoading(false);
       }
@@ -70,9 +63,7 @@ function MisInscripciones() {
     }
   }, [socioId]);
 
-  const cancelarInscripcion = async (
-    id: number
-  ) => {
+  const cancelarInscripcion = async (id: number) => {
     const confirmar = window.confirm(
       "¿Seguro que querés cancelar esta inscripción?"
     );
@@ -88,26 +79,43 @@ function MisInscripciones() {
       );
 
       if (!response.ok) {
-        throw new Error(
-          "No se pudo cancelar la inscripción"
-        );
+        throw new Error("No se pudo cancelar la inscripción");
       }
 
       setInscripciones((prev) =>
-        prev.filter(
-          (inscripcion) =>
-            inscripcion.id !== id
-        )
+        prev.filter((inscripcion) => inscripcion.id !== id)
       );
 
-      alert(
-        "Inscripción cancelada correctamente"
-      );
+      alert("Inscripción cancelada correctamente");
     } catch (error) {
       console.error(error);
-      alert(
-        "Error al cancelar la inscripción"
-      );
+      alert("Error al cancelar la inscripción");
+    }
+  };
+
+  const obtenerTextoEstadoPago = (estadoPago?: string) => {
+    switch (estadoPago) {
+      case "PENDIENTE_PAGO":
+        return "Pendiente de pago";
+      case "PAGADA":
+        return "Pagada";
+      case "CANCELADA":
+        return "Cancelada";
+      default:
+        return "Pendiente de pago";
+    }
+  };
+
+  const obtenerClaseEstadoPago = (estadoPago?: string) => {
+    switch (estadoPago) {
+      case "PENDIENTE_PAGO":
+        return "estado-pago pendiente";
+      case "PAGADA":
+        return "estado-pago pagada";
+      case "CANCELADA":
+        return "estado-pago cancelada";
+      default:
+        return "estado-pago pendiente";
     }
   };
 
@@ -130,9 +138,7 @@ function MisInscripciones() {
           <div>
             <p>No tenés inscripciones activas.</p>
 
-            <Link to="/clases">
-              Ver clases disponibles
-            </Link>
+            <Link to="/clases">Ver clases disponibles</Link>
           </div>
         ) : (
           <table className="socios-table">
@@ -143,72 +149,56 @@ function MisInscripciones() {
                 <th>Día</th>
                 <th>Horario</th>
                 <th>Inscripción</th>
-                <th>Estado</th>
+                <th>Estado clase</th>
+                <th>Estado pago</th>
                 <th>Acción</th>
               </tr>
             </thead>
 
             <tbody>
-              {inscripciones.map(
-                (inscripcion) => {
-                  const clase =
-                    inscripcion.clase;
+              {inscripciones.map((inscripcion) => {
+                const clase = inscripcion.clase;
 
-                  return (
-                    <tr key={inscripcion.id}>
-                      <td>
-                        {
-                          clase?.actividad
-                            ?.nombre
-                        }
-                      </td>
+                return (
+                  <tr key={inscripcion.id}>
+                    <td>{clase?.actividad?.nombre}</td>
 
-                      <td>
-                        {clase?.profesor}
-                      </td>
+                    <td>{clase?.profesor}</td>
 
-                      <td>
-                        {clase?.fecha}
-                      </td>
+                    <td>{clase?.fecha}</td>
 
-                      <td>
-                        {clase?.horaInicio?.slice(
-                          0,
-                          5
-                        )}{" "}
-                        -{" "}
-                        {clase?.horaFin?.slice(
-                          0,
-                          5
+                    <td>
+                      {clase?.horaInicio?.slice(0, 5)} -{" "}
+                      {clase?.horaFin?.slice(0, 5)}
+                    </td>
+
+                    <td>{inscripcion.fechaInscripcion || "Sin fecha"}</td>
+
+                    <td>{clase?.estado || "Activa"}</td>
+
+                    <td>
+                      <span
+                        className={obtenerClaseEstadoPago(
+                          inscripcion.estadoPago
                         )}
-                      </td>
+                      >
+                        {obtenerTextoEstadoPago(inscripcion.estadoPago)}
+                      </span>
+                    </td>
 
-                      <td>
-                        {inscripcion.fechaInscripcion ||
-                          "Sin fecha"}
-                      </td>
-
-                      <td>
-                        {clase?.estado ||
-                          "Activa"}
-                      </td>
-
-                      <td>
-                        <button
-                          className="delete-btn"
-                          onClick={() =>
-                            cancelarInscripcion(
-                              inscripcion.id
-                            )
-                          }
-                        >
-                          Cancelar
-                        </button>
-                      </td>
-                    </tr>
-                  );
-                }
-              )}
+                    <td>
+                      <button
+                        className="delete-btn"
+                        onClick={() =>
+                          cancelarInscripcion(inscripcion.id)
+                        }
+                      >
+                        Cancelar
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         )}
