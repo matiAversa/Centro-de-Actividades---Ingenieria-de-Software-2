@@ -11,7 +11,8 @@ public class ActividadService {
 
     private final ActividadRepository actividadRepository;
 
-    public ActividadService(ActividadRepository actividadRepository) {
+    public ActividadService(
+            ActividadRepository actividadRepository) {
         this.actividadRepository = actividadRepository;
     }
 
@@ -23,16 +24,21 @@ public class ActividadService {
         return actividadRepository.save(actividad);
     }
 
-    public Actividad actualizar(Long id, Actividad datos) {
+    public Actividad actualizar(
+            Long id,
+            Actividad datos) {
         Actividad actividad = actividadRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Actividad no encontrada"));
+                .orElseThrow(() -> new RuntimeException(
+                        "Actividad no encontrada"));
 
         actividad.setNombre(datos.getNombre());
-        actividad.setProfesor(datos.getProfesor());
-        actividad.setHorario(datos.getHorario());
-        actividad.setCupos(datos.getCupos());
+        actividad.setDescripcion(
+                datos.getDescripcion());
+        actividad.setActivo(
+                datos.getActivo());
 
-        return actividadRepository.save(actividad);
+        return actividadRepository.save(
+                actividad);
     }
 
     public void eliminar(Long id) {

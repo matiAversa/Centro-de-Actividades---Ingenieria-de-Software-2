@@ -6,62 +6,50 @@ import { useAuth } from "../context/useAuth";
 interface Actividad {
   id: number;
   nombre: string;
-  profesor: string;
-  horario: string;
 }
 
-interface Socio {
+interface Clase {
   id: number;
-  nombre: string;
+  fecha: string;
+  horaInicio: string;
+  horaFin: string;
+  profesor: string;
+  cupoMaximo: number;
+  cuposDisponibles: number;
+  estado: string;
+  actividad: Actividad;
 }
 
 interface Inscripcion {
   id: number;
-  socio: Socio;
-  actividad: Actividad;
+  clase: Clase;
   fechaInscripcion?: string;
+  estadoPago?: string;
 }
 
 function MisInscripciones() {
-  const [inscripciones, setInscripciones] =
-    useState<Inscripcion[]>([]);
-
+  const [inscripciones, setInscripciones] = useState<Inscripcion[]>([]);
   const [loading, setLoading] = useState(true);
 
   const { user } = useAuth();
-
   const socioId = user?.socioId;
 
   useEffect(() => {
     const obtenerInscripciones = async () => {
       try {
         const response = await fetch(
-          "http://localhost:8080/api/inscripciones"
+          `http://localhost:8080/api/inscripciones/socio/${socioId}`
         );
 
         if (!response.ok) {
-          throw new Error(
-            "Error al obtener inscripciones"
-          );
+          throw new Error("Error al obtener inscripciones");
         }
 
-        const data: Inscripcion[] =
-          await response.json();
-
-        const inscripcionesDelSocio =
-          data.filter(
-            (inscripcion) =>
-              inscripcion.socio.id === socioId
-          );
-
-        setInscripciones(
-          inscripcionesDelSocio
-        );
+        const data: Inscripcion[] = await response.json();
+        setInscripciones(data);
       } catch (error) {
         console.error(error);
-        alert(
-          "No se pudieron cargar tus inscripciones"
-        );
+        alert("No se pudieron cargar tus inscripciones");
       } finally {
         setLoading(false);
       }
@@ -75,10 +63,7 @@ function MisInscripciones() {
     }
   }, [socioId]);
 
-
-  const cancelarInscripcion = async (
-    id: number
-  ) => {
+  const cancelarInscripcion = async (id: number) => {
     const confirmar = window.confirm(
       "¿Seguro que querés cancelar esta inscripción?"
     );
@@ -94,26 +79,43 @@ function MisInscripciones() {
       );
 
       if (!response.ok) {
-        throw new Error(
-          "No se pudo cancelar la inscripción"
-        );
+        throw new Error("No se pudo cancelar la inscripción");
       }
 
       setInscripciones((prev) =>
-        prev.filter(
-          (inscripcion) =>
-            inscripcion.id !== id
-        )
+        prev.filter((inscripcion) => inscripcion.id !== id)
       );
 
-      alert(
-        "Inscripción cancelada correctamente"
-      );
+      alert("Inscripción cancelada correctamente");
     } catch (error) {
       console.error(error);
-      alert(
-        "Error al cancelar la inscripción"
-      );
+      alert("Error al cancelar la inscripción");
+    }
+  };
+
+  const obtenerTextoEstadoPago = (estadoPago?: string) => {
+    switch (estadoPago) {
+      case "PENDIENTE_PAGO":
+        return "Pendiente de pago";
+      case "PAGADA":
+        return "Pagada";
+      case "CANCELADA":
+        return "Cancelada";
+      default:
+        return "Pendiente de pago";
+    }
+  };
+
+  const obtenerClaseEstadoPago = (estadoPago?: string) => {
+    switch (estadoPago) {
+      case "PENDIENTE_PAGO":
+        return "estado-pago pendiente";
+      case "PAGADA":
+        return "estado-pago pagada";
+      case "CANCELADA":
+        return "estado-pago cancelada";
+      default:
+        return "estado-pago pendiente";
     }
   };
 
@@ -136,9 +138,7 @@ function MisInscripciones() {
           <div>
             <p>No tenés inscripciones activas.</p>
 
-            <Link to="/clases">
-              Ver clases disponibles
-            </Link>
+            <Link to="/clases">Ver clases disponibles</Link>
           </div>
         ) : (
           <table className="socios-table">
@@ -146,60 +146,59 @@ function MisInscripciones() {
               <tr>
                 <th>Actividad</th>
                 <th>Profesor</th>
+                <th>Día</th>
                 <th>Horario</th>
-                <th>Fecha</th>
-                <th>Estado</th>
+                <th>Inscripción</th>
+                <th>Estado clase</th>
+                <th>Estado pago</th>
                 <th>Acción</th>
               </tr>
             </thead>
 
             <tbody>
-              {inscripciones.map(
-                (inscripcion) => (
+              {inscripciones.map((inscripcion) => {
+                const clase = inscripcion.clase;
+
+                return (
                   <tr key={inscripcion.id}>
-                    <td>
-                      {
-                        inscripcion.actividad
-                          .nombre
-                      }
-                    </td>
+                    <td>{clase?.actividad?.nombre}</td>
+
+                    <td>{clase?.profesor}</td>
+
+                    <td>{clase?.fecha}</td>
 
                     <td>
-                      {
-                        inscripcion.actividad
-                          .profesor
-                      }
+                      {clase?.horaInicio?.slice(0, 5)} -{" "}
+                      {clase?.horaFin?.slice(0, 5)}
                     </td>
+
+                    <td>{inscripcion.fechaInscripcion || "Sin fecha"}</td>
+
+                    <td>{clase?.estado || "Activa"}</td>
 
                     <td>
-                      {
-                        inscripcion.actividad
-                          .horario
-                      }
+                      <span
+                        className={obtenerClaseEstadoPago(
+                          inscripcion.estadoPago
+                        )}
+                      >
+                        {obtenerTextoEstadoPago(inscripcion.estadoPago)}
+                      </span>
                     </td>
-
-                    <td>
-                      {inscripcion.fechaInscripcion ||
-                        "Sin fecha"}
-                    </td>
-
-                    <td>Activa</td>
 
                     <td>
                       <button
                         className="delete-btn"
                         onClick={() =>
-                          cancelarInscripcion(
-                            inscripcion.id
-                          )
+                          cancelarInscripcion(inscripcion.id)
                         }
                       >
                         Cancelar
                       </button>
                     </td>
                   </tr>
-                )
-              )}
+                );
+              })}
             </tbody>
           </table>
         )}
