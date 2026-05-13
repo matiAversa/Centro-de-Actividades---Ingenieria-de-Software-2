@@ -18,4 +18,7 @@ public class FichaMedica {
     @JoinColumn(name = "id_usuario", nullable = false, unique = true) // FK en ficha_medica
     private Usuario usuario;
 
+
+    public FichaMedica() {
+    }
 }

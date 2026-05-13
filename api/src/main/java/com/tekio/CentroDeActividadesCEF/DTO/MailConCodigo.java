@@ -18,6 +18,13 @@ public class MailConCodigo {
             throw new RuntimeException("No se pudo serializar a JSON", e);
         }
     }
+
+    public String getCorreo (){
+        return this.correo;
+    }
+    public String getCodigo (){
+        return this.codigo;
+    }
 }
 
 

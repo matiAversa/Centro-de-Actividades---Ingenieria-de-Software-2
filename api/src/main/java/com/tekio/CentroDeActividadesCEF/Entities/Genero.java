@@ -24,4 +24,7 @@ public class Genero {
     public String getNombreGenero() {
         return nombreGenero;
     }
+
+    public Genero() {
+    }
 }
