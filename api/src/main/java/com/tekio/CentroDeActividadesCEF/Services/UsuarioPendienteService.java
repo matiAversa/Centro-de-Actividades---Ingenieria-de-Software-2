@@ -9,11 +9,9 @@ import com.tekio.CentroDeActividadesCEF.Entities.UsuarioPendiente;
 import com.tekio.CentroDeActividadesCEF.Repositories.GeneroRepository;
 import com.tekio.CentroDeActividadesCEF.Repositories.RolRepository;
 import com.tekio.CentroDeActividadesCEF.Repositories.UsuarioPendienteRepository;
-import com.tekio.CentroDeActividadesCEF.Repositories.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class UsuarioPendienteService {
@@ -48,8 +46,8 @@ public class UsuarioPendienteService {
         Rol rol = this.rolRepository.findById(1).orElse(null);
         return up.pendienteAUsuario(genero, rol);
     }
-
-    public void deleteWithCorreo (String mail){
+@Transactional
+    public void borrarPendiente(String mail){
         this.usuarioPendienteRepository.deleteByCorreo(mail);
     }
 
@@ -59,6 +57,18 @@ public class UsuarioPendienteService {
             return true;
         }
         return false;
+    }
+
+    public Boolean actualizarCodigo (String correo, String nuevoCodigoCorreo){
+        UsuarioPendiente up = this.usuarioPendienteRepository.findByCorreo(correo);
+        if (up == null){
+            return false;
+        }
+        up.actualizarCodigo(nuevoCodigoCorreo);
+        this.usuarioPendienteRepository.save(up);
+        return true;
+
+
     }
 
 }

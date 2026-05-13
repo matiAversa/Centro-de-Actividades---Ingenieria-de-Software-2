@@ -33,6 +33,7 @@ public class Usuario {
     private String telefono;
 
     @NotNull
+    @Column(unique = true, nullable = false)
     private String correo;
 
     @NotNull

@@ -10,6 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import java.time.LocalDate;
+import java.time.Period;
+import java.time.format.DateTimeFormatter;
 
 @CrossOrigin(origins = "http://localhost:5173")
 @RestController
@@ -32,10 +35,14 @@ public class UsuarioController {
     public ResponseEntity<String> EnvioDeCodigo(@RequestBody SignUpRequest body){
         try {
         if (!body.ValidarDatos()){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error en alguna validacion de datos");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error en la validacion de datos.");
         }
         if (usuarioService.existeCorreo(body.getCorreo())){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("el mail ya existe en el sistema");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("El mail ya esta registrado en el sistema.");
+        }
+        if (!esMayorDe14(body.getFechaNacimiento())){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("El usuario debe ser mayor de 14 años de edad.");
+
         }
         VerificationCode generadorCodigo = new VerificationCode();
         String codigoCorreo = generadorCodigo.generarCodigoCorreo();
@@ -48,16 +55,26 @@ public class UsuarioController {
         }
     }
 
+    private Boolean esMayorDe14 (String fechaString) {
+
+        if (fechaString.isEmpty()) return false;
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        LocalDate fechaLD = LocalDate.parse(fechaString, dateFormatter);
+        int edad = Period.between(fechaLD, LocalDate.now()).getYears();
+
+        return edad >= 14;
+    }
+
     @PostMapping("/ValidarCodigo")
     public ResponseEntity<String> ValidarCodigo  (@RequestBody MailConCodigo body){
 
         try{
             if (this.usuarioPendienteService.validarCodigo (body)){
                 this.usuarioService.almacenarUsuario(this.usuarioPendienteService.getUsusarioWithCorreo(body.getCorreo()));
-                this.usuarioPendienteService.deleteWithCorreo(body.getCorreo());
+                this.usuarioPendienteService.borrarPendiente(body.getCorreo());
                 return ResponseEntity.status(HttpStatus.OK).body("");
             }else{
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("el codigo enviado no es correcto");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("el codigo no es correcto, intentarlo nuevamente.");
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -70,12 +87,32 @@ public class UsuarioController {
     @PostMapping("/eliminarPendiente")
     public ResponseEntity<String> eliminarPendiente (@RequestBody String mail){
         try {
-            this.usuarioPendienteService.deleteWithCorreo(mail);
+            this.usuarioPendienteService.borrarPendiente(mail);
             return ResponseEntity.status(HttpStatus.OK).body("se elimino el usuario pendiente");
         }catch(Exception e){
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("error en endpoint '/verificado'");
         }
+    }
+
+    @PostMapping("/ReenviarCodigo")
+    public ResponseEntity<String> ReenviarCodigo (@RequestBody MailConCodigo body){
+        String correo = body.getCorreo();
+        try{
+
+            VerificationCode generadorCodigo = new VerificationCode();
+            String nuevoCodigoCorreo = generadorCodigo.generarCodigoCorreo();
+            this.usuarioPendienteService.actualizarCodigo(correo, nuevoCodigoCorreo);
+            this.emailService.sendVerificationCode(correo, nuevoCodigoCorreo);
+
+            return ResponseEntity.status(HttpStatus.OK).body("se reenvio el codigo correctamente al mail: " + correo);
+
+        }catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("error en endpoint '/ReenviarCodigo'");
+
+        }
+
     }
 
 

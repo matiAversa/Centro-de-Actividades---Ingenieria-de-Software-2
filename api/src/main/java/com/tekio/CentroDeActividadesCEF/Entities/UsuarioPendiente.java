@@ -29,6 +29,7 @@ public class UsuarioPendiente {
     private String telefono;
 
     @NotNull
+    @Column(unique = true, nullable = false)
     private String correo;
 
     @NotNull
@@ -72,6 +73,10 @@ public class UsuarioPendiente {
 
     public Integer getGenero (){
         return this.genero;
+    }
+
+    public void actualizarCodigo (String codigoNuevo){
+        this.codigo = codigoNuevo;
     }
 
     public Usuario pendienteAUsuario (Genero genero, Rol rol){

@@ -45,12 +45,19 @@ function Register() {
         navigate("/");
     };
 
+    function toDDMMYYYY(yyyyMMdd: string) {
+        // espera "YYYY-MM-DD"
+        const [y, m, d] = yyyyMMdd.split("-");
+        if (!y || !m || !d) return yyyyMMdd; // fallback si viene vacío/mal
+        return `${d}/${m}/${y}`;
+    }
+
 
     const handleRegister = async (e: React.FormEvent) => {
+        localStorage.removeItem("mailActual")
         e.preventDefault();
         setError("");
 
-        // validación front mínima
         if (form.contrasena !== form.confirmPassword) {
             setError("Las contraseñas no coinciden");
             return;
@@ -62,32 +69,34 @@ function Register() {
             dni: form.dni.trim(),
             telefono: form.telefono.trim(),
             genero: form.genero,
-            fechaNacimiento: form.fechaNacimiento, // viene del input date
+            fechaNacimiento: toDDMMYYYY(form.fechaNacimiento),
             correo: form.correo.trim().toLowerCase(),
             contrasena: form.contrasena,
         };
-        console.log(userData)
 
         setLoading(true);
         try {
+            console.log(userData)
             const res = await fetch(`${API_BASE_URL}/User/EnvioDeCodigo`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(userData),
             });
+
             const text = await res.text();
-            console.log(text);
+
             if (res.ok) {
-                try {
-                    localStorage.setItem("mailActual", text);
-                    navigate("/VerficacionDeCodigo")
-                    return { ok: true };
-                } catch {
-                    return { ok: true, data: { correo: userData.correo, codigo: "" } };
-                }
+                // por si el backend devuelve JSON-string con comillas
+                const mail = text.replace(/^"|"$/g, "").trim();
+                localStorage.setItem("mailActual", mail);
+
+                navigate("/VerficacionDeCodigo");
+                return;
             }
 
-            return { ok: false, status: res.status, message: text || "Error" };
+            setError(text || "Error al registrar. Intentá nuevamente.");
+        } catch {
+            setError("No se pudo conectar con el servidor.");
         } finally {
             setLoading(false);
         }
