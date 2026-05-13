@@ -6,19 +6,23 @@ import { useAuth } from "../context/useAuth";
 interface Actividad {
   id: number;
   nombre: string;
-  profesor: string;
-  horario: string;
 }
 
-interface Socio {
+interface Clase {
   id: number;
-  nombre: string;
+  fecha: string;
+  horaInicio: string;
+  horaFin: string;
+  profesor: string;
+  cupoMaximo: number;
+  cuposDisponibles: number;
+  estado: string;
+  actividad: Actividad;
 }
 
 interface Inscripcion {
   id: number;
-  socio: Socio;
-  actividad: Actividad;
+  clase: Clase;
   fechaInscripcion?: string;
 }
 
@@ -29,14 +33,13 @@ function MisInscripciones() {
   const [loading, setLoading] = useState(true);
 
   const { user } = useAuth();
-
   const socioId = user?.socioId;
 
   useEffect(() => {
     const obtenerInscripciones = async () => {
       try {
         const response = await fetch(
-          "http://localhost:8080/api/inscripciones"
+          `http://localhost:8080/api/inscripciones/socio/${socioId}`
         );
 
         if (!response.ok) {
@@ -48,15 +51,7 @@ function MisInscripciones() {
         const data: Inscripcion[] =
           await response.json();
 
-        const inscripcionesDelSocio =
-          data.filter(
-            (inscripcion) =>
-              inscripcion.socio.id === socioId
-          );
-
-        setInscripciones(
-          inscripcionesDelSocio
-        );
+        setInscripciones(data);
       } catch (error) {
         console.error(error);
         alert(
@@ -74,7 +69,6 @@ function MisInscripciones() {
       setLoading(false);
     }
   }, [socioId]);
-
 
   const cancelarInscripcion = async (
     id: number
@@ -146,8 +140,9 @@ function MisInscripciones() {
               <tr>
                 <th>Actividad</th>
                 <th>Profesor</th>
+                <th>Día</th>
                 <th>Horario</th>
-                <th>Fecha</th>
+                <th>Inscripción</th>
                 <th>Estado</th>
                 <th>Acción</th>
               </tr>
@@ -155,50 +150,64 @@ function MisInscripciones() {
 
             <tbody>
               {inscripciones.map(
-                (inscripcion) => (
-                  <tr key={inscripcion.id}>
-                    <td>
-                      {
-                        inscripcion.actividad
-                          .nombre
-                      }
-                    </td>
+                (inscripcion) => {
+                  const clase =
+                    inscripcion.clase;
 
-                    <td>
-                      {
-                        inscripcion.actividad
-                          .profesor
-                      }
-                    </td>
-
-                    <td>
-                      {
-                        inscripcion.actividad
-                          .horario
-                      }
-                    </td>
-
-                    <td>
-                      {inscripcion.fechaInscripcion ||
-                        "Sin fecha"}
-                    </td>
-
-                    <td>Activa</td>
-
-                    <td>
-                      <button
-                        className="delete-btn"
-                        onClick={() =>
-                          cancelarInscripcion(
-                            inscripcion.id
-                          )
+                  return (
+                    <tr key={inscripcion.id}>
+                      <td>
+                        {
+                          clase?.actividad
+                            ?.nombre
                         }
-                      >
-                        Cancelar
-                      </button>
-                    </td>
-                  </tr>
-                )
+                      </td>
+
+                      <td>
+                        {clase?.profesor}
+                      </td>
+
+                      <td>
+                        {clase?.fecha}
+                      </td>
+
+                      <td>
+                        {clase?.horaInicio?.slice(
+                          0,
+                          5
+                        )}{" "}
+                        -{" "}
+                        {clase?.horaFin?.slice(
+                          0,
+                          5
+                        )}
+                      </td>
+
+                      <td>
+                        {inscripcion.fechaInscripcion ||
+                          "Sin fecha"}
+                      </td>
+
+                      <td>
+                        {clase?.estado ||
+                          "Activa"}
+                      </td>
+
+                      <td>
+                        <button
+                          className="delete-btn"
+                          onClick={() =>
+                            cancelarInscripcion(
+                              inscripcion.id
+                            )
+                          }
+                        >
+                          Cancelar
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                }
               )}
             </tbody>
           </table>

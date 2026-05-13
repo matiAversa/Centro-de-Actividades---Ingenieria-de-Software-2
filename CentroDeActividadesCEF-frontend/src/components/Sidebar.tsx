@@ -6,36 +6,81 @@ function Sidebar() {
   const location = useLocation();
 
   const isActive = (path: string) =>
-    location.pathname === path ? "active" : "";
+    location.pathname === path
+      ? "active"
+      : "";
 
   return (
     <aside className="sidebar">
       <div className="logo-container">
-        <img src={logo} alt="CEF Logo" className="logo-image" />
+        <img
+          src={logo}
+          alt="CEF Logo"
+          className="logo-image"
+        />
       </div>
 
       <nav className="menu">
-        <Link className={isActive("/dashboard")} to="/dashboard">
+        <Link
+          className={isActive(
+            "/dashboard"
+          )}
+          to="/dashboard"
+        >
           Dashboard
         </Link>
 
-        <Link className={isActive("/socios")} to="/socios">
+        <Link
+          className={isActive(
+            "/socios"
+          )}
+          to="/socios"
+        >
           Socios
         </Link>
 
-        <Link className={isActive("/actividades")} to="/actividades">
+        <Link
+          className={isActive(
+            "/actividades"
+          )}
+          to="/actividades"
+        >
           Actividades
         </Link>
 
-        <Link className={isActive("/inscripciones")} to="/inscripciones">
+        <Link
+          className={isActive(
+            "/calendario"
+          )}
+          to="/calendario"
+        >
+          Calendario
+        </Link>
+
+        <Link
+          className={isActive(
+            "/inscripciones"
+          )}
+          to="/inscripciones"
+        >
           Inscripciones
         </Link>
 
-        <Link className={isActive("/reservas")} to="/reservas">
+        <Link
+          className={isActive(
+            "/reservas"
+          )}
+          to="/reservas"
+        >
           Reservas
         </Link>
 
-        <Link className={isActive("/pagos")} to="/pagos">
+        <Link
+          className={isActive(
+            "/pagos"
+          )}
+          to="/pagos"
+        >
           Pagos
         </Link>
       </nav>
