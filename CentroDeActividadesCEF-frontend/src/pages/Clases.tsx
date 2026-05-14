@@ -39,12 +39,16 @@ function Clases() {
   const [inscribiendoMensualId, setInscribiendoMensualId] =
     useState<number | null>(null);
 
+  const [busqueda, setBusqueda] = useState("");
+  const [actividadFiltro, setActividadFiltro] = useState("TODAS");
+  const [estadoFiltro, setEstadoFiltro] = useState("TODAS");
+
   const { user } = useAuth();
   const socioId = user?.socioId;
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/immutability
-    cargarDatos();
+    void cargarDatos();
   }, []);
 
   const cargarDatos = async () => {
@@ -105,12 +109,33 @@ function Clases() {
     );
   };
 
+  const obtenerEstadoClase = (clase: Clase) => {
+    if (estaInscripto(clase.id)) return "INSCRIPTO";
+    if (tieneHorarioOcupado(clase)) return "HORARIO_OCUPADO";
+    if (clase.cuposDisponibles === 0) return "COMPLETO";
+    return "DISPONIBLE";
+  };
+
+  const obtenerTextoEstado = (clase: Clase) => {
+    const estado = obtenerEstadoClase(clase);
+
+    switch (estado) {
+      case "INSCRIPTO":
+        return "Inscripto";
+      case "HORARIO_OCUPADO":
+        return "Horario ocupado";
+      case "COMPLETO":
+        return "Completo";
+      default:
+        return "Disponible";
+    }
+  };
+
   const obtenerTextoBoton = (clase: Clase) => {
     if (inscribiendoId === clase.id) return "Inscribiendo...";
-    if (estaInscripto(clase.id)) return "Inscripto ✓";
+    if (estaInscripto(clase.id)) return "Ya estás inscripto";
     if (tieneHorarioOcupado(clase)) return "Horario ocupado";
-    if (clase.cuposDisponibles === 0) return "Completo";
-
+    if (clase.cuposDisponibles === 0) return "Sin cupos";
     return "Inscribirme";
   };
 
@@ -151,7 +176,7 @@ function Clases() {
       }
 
       alert("Inscripción realizada correctamente");
-      cargarDatos();
+      await cargarDatos();
     } catch (error) {
       console.error(error);
 
@@ -197,7 +222,7 @@ function Clases() {
       }
 
       alert("Inscripción mensual realizada correctamente");
-      cargarDatos();
+      await cargarDatos();
     } catch (error) {
       console.error(error);
 
@@ -217,11 +242,41 @@ function Clases() {
     return date.toLocaleDateString("es-AR", {
       weekday: "long",
       day: "2-digit",
-      month: "2-digit",
+      month: "long",
     });
   };
 
-  const clasesAgrupadas = clases.reduce<Record<string, Clase[]>>(
+  const actividadesDisponibles = Array.from(
+    new Map(
+      clases.map((clase) => [
+        clase.actividad.id,
+        {
+          id: clase.actividad.id,
+          nombre: clase.actividad.nombre,
+        },
+      ])
+    ).values()
+  );
+
+  const clasesFiltradas = clases.filter((clase) => {
+    const textoBusqueda = busqueda.toLowerCase();
+    const estadoClase = obtenerEstadoClase(clase);
+
+    const coincideBusqueda =
+      clase.actividad?.nombre.toLowerCase().includes(textoBusqueda) ||
+      clase.profesor.toLowerCase().includes(textoBusqueda);
+
+    const coincideActividad =
+      actividadFiltro === "TODAS" ||
+      String(clase.actividad.id) === actividadFiltro;
+
+    const coincideEstado =
+      estadoFiltro === "TODAS" || estadoClase === estadoFiltro;
+
+    return coincideBusqueda && coincideActividad && coincideEstado;
+  });
+
+  const clasesAgrupadas = clasesFiltradas.reduce<Record<string, Clase[]>>(
     (grupos, clase) => {
       if (!grupos[clase.fecha]) {
         grupos[clase.fecha] = [];
@@ -246,72 +301,160 @@ function Clases() {
   return (
     <UserLayout>
       <div className="dashboard-content">
-        <h2>Calendario de clases</h2>
+        <div className="clases-page-header">
+          <div>
+            <p className="section-label">Clases disponibles</p>
+            <h2>Elegí tu próxima clase</h2>
+            <p className="section-description">
+              Consultá horarios, cupos disponibles e inscribite a una clase
+              individual o al mes completo.
+            </p>
+          </div>
+        </div>
+
+        <div className="clases-filters">
+          <input
+            type="text"
+            placeholder="Buscar por actividad o profesor..."
+            value={busqueda}
+            onChange={(e) => setBusqueda(e.target.value)}
+          />
+
+          <select
+            value={actividadFiltro}
+            onChange={(e) => setActividadFiltro(e.target.value)}
+          >
+            <option value="TODAS">Todas las actividades</option>
+
+            {actividadesDisponibles.map((actividad) => (
+              <option key={actividad.id} value={actividad.id}>
+                {actividad.nombre}
+              </option>
+            ))}
+          </select>
+
+          <select
+            value={estadoFiltro}
+            onChange={(e) => setEstadoFiltro(e.target.value)}
+          >
+            <option value="TODAS">Todos los estados</option>
+            <option value="DISPONIBLE">Disponibles</option>
+            <option value="INSCRIPTO">Mis inscripciones</option>
+            <option value="COMPLETO">Completas</option>
+            <option value="HORARIO_OCUPADO">Horario ocupado</option>
+          </select>
+        </div>
 
         {loading ? (
           <p>Cargando clases...</p>
         ) : fechasOrdenadas.length === 0 ? (
-          <p>No hay clases disponibles.</p>
+          <div className="empty-state">
+            <h3>No hay clases para mostrar</h3>
+            <p>Probá cambiar los filtros o revisar más tarde.</p>
+          </div>
         ) : (
           <div className="calendario-clases">
             {fechasOrdenadas.map((fecha) => (
               <section key={fecha} className="dia-clases">
-                <h3>{formatearFecha(fecha)}</h3>
+                <div className="dia-clases-header">
+                  <h3>{formatearFecha(fecha)}</h3>
+                  <span>{clasesAgrupadas[fecha].length} clases</span>
+                </div>
 
                 <div className="clases-grid">
                   {clasesAgrupadas[fecha]
                     .sort((a, b) =>
                       a.horaInicio.localeCompare(b.horaInicio)
                     )
-                    .map((clase) => (
-                      <div key={clase.id} className="clase-card">
-                        <h4>{clase.actividad?.nombre}</h4>
+                    .map((clase) => {
+                      const porcentajeOcupado =
+                        clase.cupoMaximo > 0
+                          ? ((clase.cupoMaximo - clase.cuposDisponibles) /
+                              clase.cupoMaximo) *
+                            100
+                          : 0;
 
-                        <p>
-                          <strong>Profesor:</strong> {clase.profesor}
-                        </p>
+                      return (
+                        <div key={clase.id} className="clase-card">
+                          <div className="clase-card-header">
+                            <div>
+                              <h4>{clase.actividad?.nombre}</h4>
+                              <p>{clase.profesor}</p>
+                            </div>
 
-                        <p>
-                          <strong>Horario:</strong>{" "}
-                          {clase.horaInicio.slice(0, 5)} -{" "}
-                          {clase.horaFin.slice(0, 5)}
-                        </p>
+                            <span
+                              className={`clase-status ${obtenerEstadoClase(
+                                clase
+                              ).toLowerCase()}`}
+                            >
+                              {obtenerTextoEstado(clase)}
+                            </span>
+                          </div>
 
-                        <p>
-                          <strong>Cupos:</strong> {clase.cuposDisponibles}/
-                          {clase.cupoMaximo}
-                        </p>
+                          <div className="clase-info-grid">
+                            <div>
+                              <span>Horario</span>
+                              <strong>
+                                {clase.horaInicio.slice(0, 5)} -{" "}
+                                {clase.horaFin.slice(0, 5)}
+                              </strong>
+                            </div>
 
-                        {tieneHorarioOcupado(clase) &&
-                          !estaInscripto(clase.id) && (
-                            <p className="warning-text">
-                              Ya tenés una clase en ese horario.
+                            <div>
+                              <span>Cupos</span>
+                              <strong>
+                                {clase.cuposDisponibles}/{clase.cupoMaximo}
+                              </strong>
+                            </div>
+                          </div>
+
+                          <div className="cupos-box">
+                            <div className="cupos-bar">
+                              <div
+                                className="cupos-progress"
+                                style={{ width: `${porcentajeOcupado}%` }}
+                              />
+                            </div>
+
+                            <p>
+                              {clase.cuposDisponibles > 0
+                                ? `${clase.cuposDisponibles} cupos disponibles`
+                                : "Sin cupos disponibles"}
                             </p>
-                          )}
+                          </div>
 
-                        <div className="class-actions">
-                          <button
-                            disabled={!puedeInscribirse(clase)}
-                            onClick={() => inscribirse(clase.id)}
-                          >
-                            {obtenerTextoBoton(clase)}
-                          </button>
+                          {tieneHorarioOcupado(clase) &&
+                            !estaInscripto(clase.id) && (
+                              <p className="warning-text">
+                                Ya tenés una clase en ese horario.
+                              </p>
+                            )}
 
-                          <button
-                            className="secondary-btn"
-                            disabled={
-                              inscribiendoMensualId === clase.id ||
-                              estaInscripto(clase.id)
-                            }
-                            onClick={() => inscribirseAlMes(clase)}
-                          >
-                            {inscribiendoMensualId === clase.id
-                              ? "Inscribiendo mes..."
-                              : "Inscribirme al mes"}
-                          </button>
+                          <div className="class-actions">
+                            <button
+                              className="primary-class-btn"
+                              disabled={!puedeInscribirse(clase)}
+                              onClick={() => inscribirse(clase.id)}
+                            >
+                              {obtenerTextoBoton(clase)}
+                            </button>
+
+                            <button
+                              className="secondary-class-btn"
+                              disabled={
+                                inscribiendoMensualId === clase.id ||
+                                estaInscripto(clase.id)
+                              }
+                              onClick={() => inscribirseAlMes(clase)}
+                            >
+                              {inscribiendoMensualId === clase.id
+                                ? "Inscribiendo mes..."
+                                : "Inscribirme al mes"}
+                            </button>
+                          </div>
                         </div>
-                      </div>
-                    ))}
+                      );
+                    })}
                 </div>
               </section>
             ))}
