@@ -1,0 +1,179 @@
+.inscripciones-container {
+  padding: 40px;
+}
+
+.inscripciones-hero {
+  background: linear-gradient(135deg, #163f7a, #2563eb);
+  color: white;
+  padding: 32px;
+  border-radius: 26px;
+  margin-bottom: 24px;
+}
+
+.inscripciones-hero p {
+  color: #fecaca;
+  font-size: 13px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 8px;
+}
+
+.inscripciones-hero h2 {
+  color: white;
+  font-size: 42px;
+  margin-bottom: 8px;
+}
+
+.inscripciones-hero span {
+  color: #dbeafe;
+}
+
+.inscripciones-form-card,
+.inscripciones-table-card,
+.inscripciones-toolbar {
+  background: #ffffff;
+  border-radius: 22px;
+  padding: 22px;
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.06);
+  margin-bottom: 24px;
+}
+
+.inscripciones-form-card h3 {
+  color: #111827;
+  margin-bottom: 16px;
+}
+
+.inscripciones-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 2fr auto;
+  gap: 14px;
+}
+
+.inscripciones-form-grid select,
+.inscripciones-toolbar input {
+  width: 100%;
+  border: 1px solid #d1d5db;
+  background: #f9fafb;
+  color: #111827;
+  padding: 13px 14px;
+  border-radius: 12px;
+  font-size: 14px;
+  outline: none;
+}
+
+.inscripciones-form-grid select:focus,
+.inscripciones-toolbar input:focus {
+  border-color: #163f7a;
+  background: #ffffff;
+}
+
+.inscripciones-form-grid button {
+  border: none;
+  background: #d01f25;
+  color: white;
+  padding: 13px 22px;
+  border-radius: 14px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.inscripciones-form-grid button:hover {
+  background: #b91c1c;
+}
+
+.inscripciones-table-card {
+  overflow-x: auto;
+  padding: 0;
+}
+
+.inscripciones-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  min-width: 1050px;
+}
+
+.inscripciones-table thead {
+  background: #163f7a;
+  color: white;
+}
+
+.inscripciones-table th,
+.inscripciones-table td {
+  padding: 18px 16px;
+  text-align: center;
+  border-bottom: 1px solid #e5e7eb;
+  vertical-align: middle;
+}
+
+.inscripciones-table th {
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.inscripciones-table td {
+  color: #4b5563;
+  font-size: 15px;
+}
+
+.inscripciones-table tbody tr:hover {
+  background: #f9fafb;
+}
+
+.email-cell {
+  max-width: 180px;
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+.status {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 120px;
+  padding: 9px 14px;
+  border-radius: 999px;
+  font-weight: 800;
+  font-size: 13px;
+}
+
+.status.active {
+  background: #d7f0db;
+  color: #0a6a24;
+}
+
+.status.inactive {
+  background: #ffdada;
+  color: #b00000;
+}
+
+.status.pending {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.inscripcion-delete-btn {
+  border: none;
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background: #fee2e2;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.inscripcion-delete-btn:hover {
+  background: #fecaca;
+  transform: scale(1.06);
+}
+
+@media (max-width: 900px) {
+  .inscripciones-form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .inscripciones-container {
+    padding: 24px;
+  }
+}

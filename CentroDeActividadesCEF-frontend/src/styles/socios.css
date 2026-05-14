@@ -142,3 +142,8 @@
 	background-color: #fee2e2;
 	color: #991b1b;
 }
+
+.status.pending {
+	background: #fff3cd;
+	color: #856404;
+}

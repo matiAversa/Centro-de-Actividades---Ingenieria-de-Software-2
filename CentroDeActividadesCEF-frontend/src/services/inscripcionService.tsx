@@ -1,13 +1,30 @@
 import type { Socio } from "./socioService";
-import type { Actividad } from "./actividadService";
 
 const API_URL = "http://localhost:8080/api/inscripciones";
 
+export type ActividadInscripcion = {
+  id?: number;
+  nombre?: string;
+};
+
+export type ClaseInscripcion = {
+  id?: number;
+  fecha?: string;
+  horaInicio?: string;
+  horaFin?: string;
+  profesor?: string;
+  cupoMaximo?: number;
+  cuposDisponibles?: number;
+  estado?: string;
+  actividad?: ActividadInscripcion | null;
+};
+
 export type Inscripcion = {
   id?: number;
-  socio: Socio;
-  actividad: Actividad;
-  fechaInscripcion: string;
+  socio?: Socio | null;
+  clase?: ClaseInscripcion | null;
+  fechaInscripcion?: string;
+  estadoPago?: string;
 };
 
 export const obtenerInscripciones = async (): Promise<Inscripcion[]> => {
@@ -22,10 +39,10 @@ export const obtenerInscripciones = async (): Promise<Inscripcion[]> => {
 
 export const crearInscripcion = async (
   socioId: number,
-  actividadId: number
+  claseId: number
 ): Promise<Inscripcion> => {
   const response = await fetch(
-    `${API_URL}?socioId=${socioId}&actividadId=${actividadId}`,
+    `${API_URL}?socioId=${socioId}&claseId=${claseId}`,
     {
       method: "POST",
     }

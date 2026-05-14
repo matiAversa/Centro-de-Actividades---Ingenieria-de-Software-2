@@ -1,0 +1,258 @@
+.admin-calendar-hero {
+  background: linear-gradient(135deg, #163f7a, #2563eb);
+  color: white;
+  padding: 32px;
+  border-radius: 26px;
+  margin-bottom: 24px;
+}
+
+.admin-calendar-hero h2 {
+  color: white;
+  margin-bottom: 10px;
+}
+
+.admin-calendar-hero p {
+  color: #dbeafe;
+  max-width: 720px;
+  line-height: 1.5;
+}
+
+.admin-calendar-label {
+  color: #fecaca !important;
+  font-size: 13px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 8px;
+}
+
+.admin-calendar-summary {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+  margin-bottom: 24px;
+}
+
+.admin-calendar-summary div {
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 20px;
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.06);
+  border-top: 5px solid #d01f25;
+}
+
+.admin-calendar-summary span {
+  display: block;
+  color: #6b7280;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.admin-calendar-summary strong {
+  color: #163f7a;
+  font-size: 32px;
+}
+
+.admin-calendar-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 20px;
+  margin: 32px 0 18px;
+}
+
+.admin-calendar-toolbar h3 {
+  color: #111827;
+  margin-bottom: 6px;
+}
+
+.admin-calendar-toolbar p {
+  color: #6b7280;
+}
+
+.admin-calendar-filters {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 12px;
+  min-width: 520px;
+}
+
+.admin-calendar-filters input,
+.admin-calendar-filters select {
+  width: 100%;
+  border: 1px solid #d1d5db;
+  background: #ffffff;
+  color: #111827;
+  padding: 12px 14px;
+  border-radius: 12px;
+  outline: none;
+}
+
+.admin-calendar-filters input:focus,
+.admin-calendar-filters select:focus {
+  border-color: #163f7a;
+}
+
+.admin-calendar-list {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.admin-day-section {
+  background: #ffffff;
+  border-radius: 22px;
+  padding: 20px;
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.06);
+}
+
+.admin-day-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 18px;
+}
+
+.admin-day-header h3 {
+  color: #111827;
+  text-transform: capitalize;
+}
+
+.admin-day-header span {
+  background: #f3f4f6;
+  color: #374151;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-weight: 800;
+  font-size: 13px;
+}
+
+.admin-class-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+}
+
+.admin-class-card {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 20px;
+  padding: 18px;
+  transition: 0.2s ease;
+}
+
+.admin-class-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+}
+
+.admin-class-card-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.admin-class-card-header h4 {
+  color: #111827;
+  font-size: 19px;
+  margin-bottom: 5px;
+}
+
+.admin-class-card-header p {
+  color: #6b7280;
+}
+
+.admin-class-status {
+  height: fit-content;
+  background: #dbeafe;
+  color: #1e40af;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.admin-class-info {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.admin-class-info div {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  padding: 12px;
+}
+
+.admin-class-info span {
+  display: block;
+  color: #6b7280;
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.admin-class-info strong {
+  color: #111827;
+}
+
+.admin-cupos-detail {
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 12px;
+  margin-bottom: 14px;
+  color: #4b5563;
+  font-size: 14px;
+}
+
+.admin-delete-class-btn {
+  width: 100%;
+  border: none;
+  background: #fee2e2;
+  color: #991b1b;
+  padding: 11px 14px;
+  border-radius: 12px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.admin-delete-class-btn:hover {
+  background: #fecaca;
+}
+
+@media (max-width: 1100px) {
+  .admin-class-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .admin-calendar-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .admin-calendar-filters {
+    min-width: 0;
+  }
+}
+
+@media (max-width: 700px) {
+  .admin-calendar-summary {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-calendar-filters {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-class-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-class-info {
+    grid-template-columns: 1fr;
+  }
+}
