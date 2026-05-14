@@ -101,6 +101,10 @@ public class ClaseService {
                 clase.setEstado(
                         "ACTIVA");
 
+                clase.setPrecio(
+                        request.getPrecio()
+                );
+
                 clasesCreadas.add(
                         claseRepository.save(
                                 clase));

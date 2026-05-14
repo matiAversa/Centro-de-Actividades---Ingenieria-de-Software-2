@@ -21,6 +21,8 @@ import Home from "./pages/Home";
 import Clases from "./pages/Clases";
 import MisInscripciones from "./pages/MisInscripciones";
 import MisPagos from "./pages/MisPagos";
+import PagarClase from "./pages/PagarClase";
+import Success from "./pages/Success.tsx";
 import Perfil from "./pages/Perfil";
 
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -144,6 +146,24 @@ function App() {
           element={
             <ProtectedRoute allowedRole="SOCIO">
               <MisPagos />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/pagarclase"
+          element={
+            <ProtectedRoute allowedRole="SOCIO">
+              <PagarClase />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/success"
+          element={
+            <ProtectedRoute allowedRole="SOCIO">
+              <Success />
             </ProtectedRoute>
           }
         />

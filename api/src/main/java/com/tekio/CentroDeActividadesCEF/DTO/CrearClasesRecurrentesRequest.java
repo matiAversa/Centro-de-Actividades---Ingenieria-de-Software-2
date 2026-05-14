@@ -14,6 +14,7 @@ public class CrearClasesRecurrentesRequest {
     private LocalTime horaFin;
     private String profesor;
     private Integer cupoMaximo;
+    private Double precio;
 
     public Long getActividadId() {
         return actividadId;
@@ -77,5 +78,13 @@ public class CrearClasesRecurrentesRequest {
 
     public void setCupoMaximo(Integer cupoMaximo) {
         this.cupoMaximo = cupoMaximo;
+    }
+
+    public Double getPrecio() {
+        return precio;
+    }
+
+    public void setPrecio(Double precio) {
+        this.precio = precio;
     }
 }
