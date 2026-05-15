@@ -84,7 +84,11 @@ function Socios() {
 			await eliminarSocioApi(id);
 			await cargarSocios();
 		} catch (error) {
-			console.error("Error eliminando socio:", error);
+			console.error(
+				"Error eliminando socio:",
+				error instanceof Error ? error.message : error,
+			);
+			alert(error instanceof Error ? error.message : "Error eliminando socio");
 		}
 	};
 
@@ -165,12 +169,13 @@ function Socios() {
 												✏️
 											</button>
 
-											<button
+											{/* <button
+												
 												className="delete-btn"
 												onClick={() => eliminarSocio(socio.id)}
 											>
 												🗑️
-											</button>
+											</button> */}
 										</div>
 									</td>
 								</tr>
