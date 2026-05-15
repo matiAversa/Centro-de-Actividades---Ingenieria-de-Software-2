@@ -25,7 +25,6 @@ interface LocationState {
   clase?: Clase;
 }
 
-// Reemplazá con tu Public Key (la que empieza con APP_USR-...)
 initMercadoPago(import.meta.env.VITE_MP_PUBLIC_KEY, { locale: 'es-AR' });
 
 function PagarClase() {
@@ -33,6 +32,7 @@ function PagarClase() {
   const { clase } = (location.state || {}) as LocationState;
   const [preferenceId, setPreferenceId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  
 
   useEffect(() => {
     const generarPreferencia = async () => {
@@ -40,7 +40,11 @@ function PagarClase() {
         setIsLoading(false);
         return;
       }
-
+      localStorage.setItem('pending_inscription', JSON.stringify({
+        socioId: 1, // sacar de cookie tbd
+        claseId: clase.id,
+        monto: clase.precio
+    }));
       try {
         const response = await fetch("http://localhost:8080/api/pagos/crear-preferencia", {
           method: "POST",
@@ -91,12 +95,10 @@ function PagarClase() {
             No se recibió información de la clase. Volvé a inscribirte desde el listado.
           </p>
         )}
-
         <div style={{ marginTop: '20px', marginBottom: '20px' }}>
           {isLoading ? (
             <p>Cargando opciones de pago...</p>
           ) : preferenceId ? (
-            /* Este es el botón oficial de Mercado Pago */
             <Wallet initialization={{ preferenceId }} />
           ) : (
             <p style={{ color: 'red' }}>No se pudo cargar el botón de pago. Reintentá más tarde.</p>

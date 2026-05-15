@@ -1,11 +1,17 @@
 package com.tekio.CentroDeActividadesCEF.Controllers;
 
+import com.tekio.CentroDeActividadesCEF.DTO.ConfirmacionPagoDTO;
 import com.tekio.CentroDeActividadesCEF.DTO.InscripcionMensualRequest;
 import com.tekio.CentroDeActividadesCEF.Entities.Inscripcion;
 import com.tekio.CentroDeActividadesCEF.Services.InscripcionService;
+import com.tekio.CentroDeActividadesCEF.Services.PagoService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/inscripciones")
@@ -50,5 +56,19 @@ public class InscripcionController {
     @DeleteMapping("/{id}")
     public void eliminar(@PathVariable Long id) {
         inscripcionService.eliminar(id);
+    }
+
+    @Autowired
+    private PagoService pagoService;
+
+    @PostMapping("/confirmar")
+    public ResponseEntity<?> confirmar(@RequestBody ConfirmacionPagoDTO datos) {
+        try {
+            pagoService.procesarExito(datos);
+            return ResponseEntity.ok(Map.of("message", "Proceso completado con éxito"));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error al procesar: " + e.getMessage());
+        }
     }
 }

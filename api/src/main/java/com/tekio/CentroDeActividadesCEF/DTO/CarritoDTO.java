@@ -1,7 +1,5 @@
 package com.tekio.CentroDeActividadesCEF.DTO;
 
-import tools.jackson.databind.ObjectMapper;
-
 public class CarritoDTO {
 
     private String nombre;

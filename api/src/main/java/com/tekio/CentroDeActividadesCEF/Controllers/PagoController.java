@@ -19,7 +19,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/pagos")
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(origins = "https://ambush-unlucky-morally.ngrok-free.dev")
 public class PagoController {
 
     @Value("${mercado_pago.access_token}")
@@ -41,15 +41,17 @@ public class PagoController {
                     .build();
 
             PreferenceBackUrlsRequest backUrls = PreferenceBackUrlsRequest.builder()
-                    .success("http://localhost:5173/success")
-                    .pending("http://localhost:5173/pending")
-                    .failure("http://localhost:5173/failure")
+                    .success("https://ambush-unlucky-morally.ngrok-free.dev/success")
+                    .pending("https://ambush-unlucky-morally.ngrok-free.dev/pending")
+                    .failure("https://ambush-unlucky-morally.ngrok-free.dev/failure")
                     .build();
+
+            System.out.println(backUrls);
 
             PreferenceRequest request = PreferenceRequest.builder()
                     .items(Collections.singletonList(item))
                     .backUrls(backUrls)
-                    //.autoReturn("appproved")
+                    .autoReturn("approved")
                     .build();
 
             Preference preference = client.create(request);
