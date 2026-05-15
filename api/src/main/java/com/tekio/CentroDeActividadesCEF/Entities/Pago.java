@@ -29,6 +29,10 @@ public class Pago {
     @JoinColumn(name = "usuario_id", nullable = false)
     private Socio socio;
 
+    @ManyToOne
+    @JoinColumn(name = "clase_id", nullable = true)
+    private Clase clase;
+
     public Pago() {
     }
 
@@ -61,4 +65,7 @@ public class Pago {
 
     public String getMetodo() { return metodo; }
     public void setMetodo(String metodo) { this.metodo = metodo; }
+
+    public Clase getClase() { return clase; }
+    public void setClase(Clase clase) { this.clase = clase; }
 }
