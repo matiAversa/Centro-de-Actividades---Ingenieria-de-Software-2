@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import UserLayout from "../components/UserLayout";
 import "../styles/clases.css";
 import { useAuth } from "../context/useAuth";
@@ -18,6 +19,7 @@ interface Clase {
   cuposDisponibles: number;
   estado: string;
   actividad: Actividad;
+  precio: number;
 }
 
 interface Socio {
@@ -35,7 +37,6 @@ function Clases() {
   const [clases, setClases] = useState<Clase[]>([]);
   const [inscripciones, setInscripciones] = useState<Inscripcion[]>([]);
   const [loading, setLoading] = useState(true);
-  const [inscribiendoId, setInscribiendoId] = useState<number | null>(null);
   const [inscribiendoMensualId, setInscribiendoMensualId] =
     useState<number | null>(null);
 
@@ -44,6 +45,7 @@ function Clases() {
   const [estadoFiltro, setEstadoFiltro] = useState("TODAS");
 
   const { user } = useAuth();
+  const navigate = useNavigate();
   const socioId = user?.socioId;
 
   useEffect(() => {
@@ -104,8 +106,7 @@ function Clases() {
     return (
       clase.cuposDisponibles > 0 &&
       !estaInscripto(clase.id) &&
-      !tieneHorarioOcupado(clase) &&
-      inscribiendoId !== clase.id
+      !tieneHorarioOcupado(clase)
     );
   };
 
@@ -132,7 +133,6 @@ function Clases() {
   };
 
   const obtenerTextoBoton = (clase: Clase) => {
-    if (inscribiendoId === clase.id) return "Inscribiendo...";
     if (estaInscripto(clase.id)) return "Ya estás inscripto";
     if (tieneHorarioOcupado(clase)) return "Horario ocupado";
     if (clase.cuposDisponibles === 0) return "Sin cupos";
@@ -159,35 +159,8 @@ function Clases() {
     ).padStart(2, "0")}-${String(finMes.getDate()).padStart(2, "0")}`;
   };
 
-  const inscribirse = async (claseId: number) => {
-    try {
-      setInscribiendoId(claseId);
-
-      const response = await fetch(
-        `http://localhost:8080/api/inscripciones?socioId=${socioId}&claseId=${claseId}`,
-        {
-          method: "POST",
-        }
-      );
-
-      if (!response.ok) {
-        const mensaje = await response.text();
-        throw new Error(mensaje || "No se pudo realizar la inscripción");
-      }
-
-      alert("Inscripción realizada correctamente");
-      await cargarDatos();
-    } catch (error) {
-      console.error(error);
-
-      if (error instanceof Error) {
-        alert(error.message);
-      } else {
-        alert("Error al inscribirse");
-      }
-    } finally {
-      setInscribiendoId(null);
-    }
+  const inscribirse = (clase: Clase) => {
+    navigate("/pagarclase", { state: { clase } });
   };
 
   const inscribirseAlMes = async (clase: Clase) => {
@@ -434,7 +407,7 @@ function Clases() {
                             <button
                               className="primary-class-btn"
                               disabled={!puedeInscribirse(clase)}
-                              onClick={() => inscribirse(clase.id)}
+                              onClick={() => inscribirse(clase)}
                             >
                               {obtenerTextoBoton(clase)}
                             </button>

@@ -1,6 +1,5 @@
 import {
   createContext,
-  useEffect,
   useState,
 } from "react";
 
@@ -33,18 +32,11 @@ export const AuthProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const [user, setUser] =
-    useState<User | null>(null);
+  const [user, setUser] = useState<User | null>(() => {
+    const savedUser = localStorage.getItem("user");
 
-  useEffect(() => {
-    const savedUser =
-      localStorage.getItem("user");
-
-    if (savedUser) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setUser(JSON.parse(savedUser));
-    }
-  }, []);
+    return savedUser ? JSON.parse(savedUser) : null;
+  });
 
   const login = (
     email: string,

@@ -27,6 +27,8 @@ public class Clase {
 
     private String estado;
 
+    private Double precio;
+
     @ManyToOne
     @JoinColumn(name = "actividad_id")
     private Actividad actividad;
@@ -104,5 +106,13 @@ public class Clase {
 
     public void setActividad(Actividad actividad) {
         this.actividad = actividad;
+    }
+
+    public Double getPrecio() {
+        return precio;
+    }
+
+    public void setPrecio(Double precio) {
+        this.precio = precio;
     }
 }
