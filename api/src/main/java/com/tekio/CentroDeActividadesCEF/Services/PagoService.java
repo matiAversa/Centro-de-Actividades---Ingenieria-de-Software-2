@@ -12,6 +12,7 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import java.util.List;
 
 import java.time.LocalDateTime;
 
@@ -46,6 +47,7 @@ public class PagoService {
         nuevoPago.setMonto(datos.getMonto());
         nuevoPago.setEstado(datos.getStatus());
         nuevoPago.setSocio(socio);
+        nuevoPago.setClase(clase);
         nuevoPago.setFechaPago(LocalDateTime.now());
         nuevoPago.setMetodo("Mercado Pago");
 
@@ -58,5 +60,9 @@ public class PagoService {
         nuevaInscripcion.setFechaInscripcion(LocalDateTime.now().toString());
 
         inscripcionRepository.save(nuevaInscripcion);
+    }
+
+    public List<Pago> getPagosPorUsuario(Long usuarioId) {
+        return pagoRepository.findBySocio_Id(usuarioId);
     }
 }

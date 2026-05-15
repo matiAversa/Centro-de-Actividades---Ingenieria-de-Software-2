@@ -6,14 +6,10 @@
   <component name="ChangeListManager">
     <list default="true" id="c78a3283-9333-4327-8de1-3cbaebaf1fb7" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CentroDeActividadesCEF-frontend/src/context/AuthContext.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/CentroDeActividadesCEF-frontend/src/context/AuthContext.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CentroDeActividadesCEF-frontend/src/pages/PagarClase.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/CentroDeActividadesCEF-frontend/src/pages/PagarClase.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CentroDeActividadesCEF-frontend/src/pages/Success.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/CentroDeActividadesCEF-frontend/src/pages/Success.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CentroDeActividadesCEF-frontend/vite.config.ts" beforeDir="false" afterPath="$PROJECT_DIR$/CentroDeActividadesCEF-frontend/vite.config.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/src/main/java/com/tekio/CentroDeActividadesCEF/Config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/api/src/main/java/com/tekio/CentroDeActividadesCEF/Config/SecurityConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/src/main/java/com/tekio/CentroDeActividadesCEF/Controllers/InscripcionController.java" beforeDir="false" afterPath="$PROJECT_DIR$/api/src/main/java/com/tekio/CentroDeActividadesCEF/Controllers/InscripcionController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CentroDeActividadesCEF-frontend/src/pages/MisPagos.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/CentroDeActividadesCEF-frontend/src/pages/MisPagos.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/api/src/main/java/com/tekio/CentroDeActividadesCEF/Controllers/PagoController.java" beforeDir="false" afterPath="$PROJECT_DIR$/api/src/main/java/com/tekio/CentroDeActividadesCEF/Controllers/PagoController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/src/main/java/com/tekio/CentroDeActividadesCEF/DTO/CarritoDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/api/src/main/java/com/tekio/CentroDeActividadesCEF/DTO/CarritoDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/src/main/java/com/tekio/CentroDeActividadesCEF/Repositories/PagoRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/api/src/main/java/com/tekio/CentroDeActividadesCEF/Repositories/PagoRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/src/main/java/com/tekio/CentroDeActividadesCEF/Services/PagoService.java" beforeDir="false" afterPath="$PROJECT_DIR$/api/src/main/java/com/tekio/CentroDeActividadesCEF/Services/PagoService.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -63,9 +59,9 @@
     "RunOnceActivity.typescript.service.memoryLimit.init": "true",
     "Spring Boot.CentroDeActividadesCefApplication.executor": "Run",
     "codeWithMe.voiceChat.enabledByDefault": "false",
-    "git-widget-placeholder": "nicolas",
+    "git-widget-placeholder": "main",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "/home/nicolas/Escritorio/Facultad/7_Septimo semestre/Ingenieria de Software II/practica/z_repo-proyecto/Centro-de-Actividades---Ingenieria-de-Software-2",
+    "last_opened_file_path": "/home/nicolas/Escritorio/Facultad/7_Septimo semestre/Ingenieria de Software II/practica/z_repo-proyecto",
     "node.js.detected.package.eslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
@@ -82,6 +78,14 @@
       </method>
     </configuration>
   </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-30f59d01ecdd-37e91769500f-intellij.indexing.shared.core-IU-261.24374.151" />
+        <option value="bundled-js-predefined-d6986cc7102b-31caf2ab9e3c-JavaScript-IU-261.24374.151" />
+      </set>
+    </attachedChunks>
+  </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
       <changelist id="c78a3283-9333-4327-8de1-3cbaebaf1fb7" name="Changes" comment="" />
@@ -92,6 +96,7 @@
       <workItem from="1778535698575" duration="4642000" />
       <workItem from="1778774882081" duration="4097000" />
       <workItem from="1778782107363" duration="21303000" />
+      <workItem from="1778858201444" duration="1087000" />
     </task>
     <servers />
   </component>

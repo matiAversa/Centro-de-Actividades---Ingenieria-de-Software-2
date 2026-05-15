@@ -3,19 +3,21 @@ import com.mercadopago.MercadoPagoConfig;
 import com.mercadopago.client.preference.*;
 import com.mercadopago.resources.preference.Preference;
 import com.tekio.CentroDeActividadesCEF.DTO.CarritoDTO;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import com.tekio.CentroDeActividadesCEF.Entities.Pago;
+import com.tekio.CentroDeActividadesCEF.Services.PagoService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
 import java.math.BigDecimal;
 import java.util.Arrays;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import com.mercadopago.exceptions.MPApiException;
 import com.mercadopago.exceptions.MPException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import org.springframework.http.ResponseEntity;
+
 
 @RestController
 @RequestMapping("/api/pagos")
@@ -24,6 +26,9 @@ public class PagoController {
 
     @Value("${mercado_pago.access_token}")
     String accessToken;
+
+    @Autowired
+    private PagoService pagoService;
 
     @PostMapping("/crear-preferencia")
     public String crear(@RequestBody CarritoDTO carrito) {
@@ -65,5 +70,16 @@ public class PagoController {
             e.printStackTrace();
             return "Error general: " + e.getMessage();
         }
+    }
+
+    @GetMapping("/socio/{id}")
+    public ResponseEntity<List<Pago>> getPagosPorId(@PathVariable("id") Long id) {
+        List<Pago> pagos = pagoService.getPagosPorUsuario(id);
+
+        if (pagos.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+
+        return ResponseEntity.ok(pagos);
     }
 }
