@@ -2,6 +2,9 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/useAuth";
 import "../styles/Navbar.css";
 
+const isAdminLikeRole = (role?: string) =>
+	role === "ADMIN" || role === "RECEPCIONISTA";
+
 function Navbar() {
 	const navigate = useNavigate();
 
@@ -19,6 +22,23 @@ function Navbar() {
 		navigate("/perfil");
 	};
 
+	const roleLabel =
+		user?.role === "ADMIN"
+			? "Admin"
+			: user?.role === "RECEPCIONISTA"
+				? "Recep."
+				: "Socio";
+
+	const userTitle = isAdminLikeRole(user?.role)
+		? user?.role === "RECEPCIONISTA"
+			? "Recepcionista"
+			: "Administrador"
+		: user?.email;
+
+	const userSubtitle = isAdminLikeRole(user?.role)
+		? "Panel de control"
+		: "Portal socio";
+
 	return (
 		<header className="navbar">
 			<div className="navbar-brand">
@@ -35,15 +55,13 @@ function Navbar() {
 				<div className="user-avatar">{avatarInitial}</div>
 
 				<div className="user-info">
-					<h3>{user?.role === "ADMIN" ? "Administrador" : user?.email}</h3>
+					<h3>{userTitle}</h3>
 
-					<p>{user?.role === "ADMIN" ? "Panel de control" : "Portal socio"}</p>
+					<p>{userSubtitle}</p>
 				</div>
 
 				<div className="navbar-actions">
-					<span className="user-role-pill">
-						{user?.role === "ADMIN" ? "Admin" : "Socio"}
-					</span>
+					<span className="user-role-pill">{roleLabel}</span>
 
 					<button
 						className="profile-btn"

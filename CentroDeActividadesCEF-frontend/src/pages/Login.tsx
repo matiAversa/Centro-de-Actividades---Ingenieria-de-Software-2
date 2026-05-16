@@ -5,152 +5,95 @@ import { useAuth } from "../context/useAuth";
 import "../styles/login.css";
 
 function Login() {
-  const navigate =
-    useNavigate();
+	const navigate = useNavigate();
 
-  const { login } =
-    useAuth();
+	const { login } = useAuth();
 
-  const [email, setEmail] =
-    useState("");
+	const [email, setEmail] = useState("");
 
-  const [
-    password,
-    setPassword,
-  ] = useState("");
+	const [password, setPassword] = useState("");
 
-  const [error, setError] =
-    useState("");
+	const [error, setError] = useState("");
 
-  const handleLogin = () => {
-    const user =
-      login(
-        email,
-        password
-      );
+	const handleLogin = () => {
+		const user = login(email, password);
 
-    if (!user) {
-      setError(
-        "Credenciales incorrectas"
-      );
-      return;
-    }
+		if (!user) {
+			setError("Credenciales incorrectas");
+			return;
+		}
 
-    if (
-      user.role ===
-      "ADMIN"
-    ) {
-      navigate(
-        "/dashboard"
-      );
-      return;
-    }
+		if (user.role === "ADMIN" || user.role === "RECEPCIONISTA") {
+			navigate("/dashboard");
+			return;
+		}
 
-    navigate("/home");
-  };
+		navigate("/home");
+	};
 
-  const handleSignin = () => {
-    navigate("/register")
-  };
+	const handleSignin = () => {
+		navigate("/register");
+	};
 
-  return (
-    <div className="login-container">
-      <div className="login-left">
-        <img
-          src={logo}
-          alt="CEF"
-          className="login-logo"
-        />
+	return (
+		<div className="login-container">
+			<div className="login-left">
+				<img src={logo} alt="CEF" className="login-logo" />
 
-        <h1>
-          Centro de Actividades
-        </h1>
+				<h1>Centro de Actividades</h1>
 
-        <p>
-          Sistema de Gestión
-          Integral
-        </p>
-      </div>
+				<p>Sistema de Gestión Integral</p>
+			</div>
 
-      <div className="login-right">
-        <div className="login-card">
-          <h2>
-            Iniciar Sesión
-          </h2>
+			<div className="login-right">
+				<div className="login-card">
+					<h2>Iniciar Sesión</h2>
 
-          <div className="input-group">
-            <label>
-              Email
-            </label>
+					<div className="input-group">
+						<label>Email</label>
 
-            <input
-              type="email"
-              placeholder="ejemplo@email.com"
-              value={email}
-              onChange={(
-                e
-              ) =>
-                setEmail(
-                  e.target.value
-                )
-              }
-            />
-          </div>
+						<input
+							type="email"
+							placeholder="ejemplo@email.com"
+							value={email}
+							onChange={(e) => setEmail(e.target.value)}
+						/>
+					</div>
 
-          <div className="input-group">
-            <label>
-              Contraseña
-            </label>
+					<div className="input-group">
+						<label>Contraseña</label>
 
-            <input
-              type="password"
-              placeholder="********"
-              value={
-                password
-              }
-              onChange={(
-                e
-              ) =>
-                setPassword(
-                  e.target.value
-                )
-              }
-            />
-          </div>
+						<input
+							type="password"
+							placeholder="********"
+							value={password}
+							onChange={(e) => setPassword(e.target.value)}
+						/>
+					</div>
 
-          {error && (
-            <p
-              style={{
-                color:
-                  "#D01F25",
-                marginBottom:
-                  "12px",
-              }}
-            >
-              {error}
-            </p>
-          )}
+					{error && (
+						<p
+							style={{
+								color: "#D01F25",
+								marginBottom: "12px",
+							}}
+						>
+							{error}
+						</p>
+					)}
 
-          <button
-            className="login-btn"
-            onClick={
-              handleLogin
-            }
-          >
-            Ingresar
-          </button>
-          <br />
-          <br />
-          <button
-            className="signin-btn"
-            onClick={handleSignin}
-          >
-            Registrarse
-          </button>
-        </div>
-      </div>
-    </div>
-  );
+					<button className="login-btn" onClick={handleLogin}>
+						Ingresar
+					</button>
+					<br />
+					<br />
+					<button className="signin-btn" onClick={handleSignin}>
+						Registrarse
+					</button>
+				</div>
+			</div>
+		</div>
+	);
 }
 
 export default Login;

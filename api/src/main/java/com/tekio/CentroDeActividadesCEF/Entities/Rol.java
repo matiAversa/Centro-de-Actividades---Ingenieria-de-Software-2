@@ -1,7 +1,7 @@
 package com.tekio.CentroDeActividadesCEF.Entities;
 
 import jakarta.persistence.*;
-import org.antlr.v4.runtime.misc.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,5 +23,21 @@ public class Rol {
 
 
     public Rol() {
+    }
+
+    public Rol(String nombreRol) {
+        this.nombreRol = nombreRol;
+    }
+
+    public Integer getIdRol() {
+        return idRol;
+    }
+
+    public String getNombreRol() {
+        return nombreRol;
+    }
+
+    public void setNombreRol(String nombreRol) {
+        this.nombreRol = nombreRol;
     }
 }

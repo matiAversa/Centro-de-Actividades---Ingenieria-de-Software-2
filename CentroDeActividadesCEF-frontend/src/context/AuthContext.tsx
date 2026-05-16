@@ -1,96 +1,78 @@
-import {
-  createContext,
-  useState,
-} from "react";
+import { createContext, useState } from "react";
 
-type UserRole = "ADMIN" | "SOCIO";
+type UserRole = "ADMIN" | "SOCIO" | "RECEPCIONISTA";
 
 type User = {
-  email: string;
-  role: UserRole;
-  socioId?: number;
+	email: string;
+	role: UserRole;
+	socioId?: number;
 };
 
 type AuthContextType = {
-  user: User | null;
+	user: User | null;
 
-  login: (
-    email: string,
-    password: string
-  ) => User | null;
+	login: (email: string, password: string) => User | null;
 
-  logout: () => void;
+	logout: () => void;
 };
 
-export const AuthContext =
-  createContext<AuthContextType | null>(
-    null
-  );
+export const AuthContext = createContext<AuthContextType | null>(null);
 
-export const AuthProvider = ({
-  children,
-}: {
-  children: React.ReactNode;
-}) => {
-  const [user, setUser] = useState<User | null>(() => {
-    const savedUser = localStorage.getItem("user");
+export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
+	const [user, setUser] = useState<User | null>(() => {
+		const savedUser = localStorage.getItem("user");
 
-    return savedUser ? JSON.parse(savedUser) : null;
-  });
+		return savedUser ? JSON.parse(savedUser) : null;
+	});
 
-  const login = (
-    email: string,
-    password: string
-  ): User | null => {
-    let loggedUser: User | null = null;
+	const login = (email: string, password: string): User | null => {
+		let loggedUser: User | null = null;
 
-    if (
-      email === "admin@cef.com" &&
-      password === "1234"
-    ) {
-      loggedUser = {
-        email,
-        role: "ADMIN",
-      };
-    }
+		if (email === "admin@cef.com" && password === "1234") {
+			loggedUser = {
+				email,
+				role: "ADMIN",
+			};
+		}
 
-    if (
-      email === "usuario@cef.com" &&
-      password === "1234"
-    ) {
-      loggedUser = {
-        email,
-        role: "SOCIO",
-        socioId: 1,
-      };
-    }
+		if (email === "recepcionista@cef.com" && password === "1234") {
+			loggedUser = {
+				email,
+				role: "RECEPCIONISTA",
+			};
+		}
 
-    if (loggedUser) {
-      setUser(loggedUser);
+		if (email === "usuario@cef.com" && password === "1234") {
+			loggedUser = {
+				email,
+				role: "SOCIO",
+				socioId: 1,
+			};
+		}
 
-      localStorage.setItem(
-        "user",
-        JSON.stringify(loggedUser)
-      );
-    }
+		if (loggedUser) {
+			setUser(loggedUser);
 
-    return loggedUser;
-  };
+			localStorage.setItem("user", JSON.stringify(loggedUser));
+		}
 
-  const logout = () => {
-    setUser(null);
-    localStorage.clear();
-  };
+		return loggedUser;
+	};
 
-  return (
-    <AuthContext.Provider
-      value={{
-        user,
-        login,
-        logout,
-      }}
-    >
-      {children}
-    </AuthContext.Provider>
-  );
+	const logout = () => {
+		setUser(null);
+		localStorage.clear();
+	};
+
+	return (
+		<AuthContext.Provider
+			value={{
+				user,
+				login,
+				logout,
+			}}
+		>
+			{children}
+		</AuthContext.Provider>
+	);
 };

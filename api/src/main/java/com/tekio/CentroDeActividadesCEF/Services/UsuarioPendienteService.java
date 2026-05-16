@@ -9,13 +9,10 @@ import com.tekio.CentroDeActividadesCEF.Entities.UsuarioPendiente;
 import com.tekio.CentroDeActividadesCEF.Repositories.GeneroRepository;
 import com.tekio.CentroDeActividadesCEF.Repositories.RolRepository;
 import com.tekio.CentroDeActividadesCEF.Repositories.UsuarioPendienteRepository;
-import com.tekio.CentroDeActividadesCEF.Repositories.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-
-import java.util.Optional;
 
 @Service
 public class UsuarioPendienteService {
@@ -47,7 +44,8 @@ public class UsuarioPendienteService {
 
         UsuarioPendiente up = this.usuarioPendienteRepository.findByCorreo(mail);
         Genero genero = generoRepository.findById(up.getGenero()).orElse(null);
-        Rol rol = this.rolRepository.findById(1).orElse(null);
+        Rol rol = this.rolRepository.findByNombreRol("SOCIO")
+                .orElseGet(() -> this.rolRepository.save(new Rol("SOCIO")));
         return up.pendienteAUsuario(genero, rol);
     }
 

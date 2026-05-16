@@ -1,20 +1,30 @@
 package com.tekio.CentroDeActividadesCEF.Services;
 
-import com.tekio.CentroDeActividadesCEF.DTO.SignUpRequest;
+import com.tekio.CentroDeActividadesCEF.DTO.CrearUsuarioRequest;
+import com.tekio.CentroDeActividadesCEF.Entities.Genero;
+import com.tekio.CentroDeActividadesCEF.Entities.Rol;
 import com.tekio.CentroDeActividadesCEF.Entities.Usuario;
+import com.tekio.CentroDeActividadesCEF.Repositories.GeneroRepository;
+import com.tekio.CentroDeActividadesCEF.Repositories.RolRepository;
 import com.tekio.CentroDeActividadesCEF.Repositories.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Locale;
 
 @Service
 public class UsuarioService {
 
     private UsuarioRepository usuarioRepository;
+    private GeneroRepository generoRepository;
+    private RolRepository rolRepository;
 
 
     @Autowired
-    public UsuarioService (UsuarioRepository usuarioRepository){
+    public UsuarioService (UsuarioRepository usuarioRepository, GeneroRepository generoRepository, RolRepository rolRepository){
         this.usuarioRepository = usuarioRepository;
+        this.generoRepository = generoRepository;
+        this.rolRepository = rolRepository;
     }
 
     public boolean existeCorreo(String email) {
@@ -23,8 +33,44 @@ public class UsuarioService {
         return usuarioRepository.existsByCorreo(normalized);
     }
 
-    public void almacenarUsuario (Usuario datos){
-        this.usuarioRepository.save(datos);
+    public Usuario almacenarUsuario (Usuario datos){
+        return this.usuarioRepository.save(datos);
+    }
+
+    public Usuario crearUsuarioConRol(CrearUsuarioRequest datos) {
+        if (datos == null || !datos.validarDatos()) {
+            throw new RuntimeException("Error en la validacion de datos.");
+        }
+
+        String correoNormalizado = datos.getCorreo().trim().toLowerCase(Locale.ROOT);
+        if (existeCorreo(correoNormalizado)) {
+            throw new RuntimeException("El mail ya esta registrado en el sistema.");
+        }
+
+        Genero genero = generoRepository.findById(datos.getGenero())
+                .orElseThrow(() -> new RuntimeException("Genero no encontrado"));
+
+        String rolSolicitado = datos.getRol() == null || datos.getRol().isBlank()
+                ? "RECEPCIONISTA"
+                : datos.getRol().trim().toUpperCase(Locale.ROOT);
+
+        Rol rol = rolRepository.findByNombreRol(rolSolicitado)
+                .orElseGet(() -> rolRepository.save(new Rol(rolSolicitado)));
+
+        Usuario nuevoUsuario = new Usuario(
+                datos.getNombre().trim(),
+                datos.getApellido().trim(),
+                datos.getDni().trim(),
+                datos.getFechaNacimiento().trim(),
+                genero,
+                datos.getTelefono().trim(),
+                correoNormalizado,
+                datos.getContrasena(),
+                rol
+        );
+
+        nuevoUsuario.normalizarDatos();
+        return this.usuarioRepository.save(nuevoUsuario);
 
     }
 
