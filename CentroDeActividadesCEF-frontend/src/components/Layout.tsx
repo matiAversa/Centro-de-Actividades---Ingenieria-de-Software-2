@@ -2,21 +2,21 @@ import Sidebar from "./Sidebar";
 import Navbar from "./Navbar";
 
 type Props = {
-  children: React.ReactNode;
+	children: React.ReactNode;
 };
 
 function Layout({ children }: Props) {
-  return (
-    <div className="dashboard-container">
-      <Sidebar />
+	return (
+		<div className="dashboard-container">
+			<Sidebar />
 
-      <div className="main-content">
-        <Navbar />
+			<div className="main-content">
+				<Navbar />
 
-        {children}
-      </div>
-    </div>
-  );
+				{children}
+			</div>
+		</div>
+	);
 }
 
 export default Layout;
