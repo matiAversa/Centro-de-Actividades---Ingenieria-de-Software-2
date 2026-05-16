@@ -5,6 +5,7 @@ import com.tekio.CentroDeActividadesCEF.DTO.InscripcionMensualRequest;
 import com.tekio.CentroDeActividadesCEF.Entities.Inscripcion;
 import com.tekio.CentroDeActividadesCEF.Services.InscripcionService;
 import com.tekio.CentroDeActividadesCEF.Services.PagoService;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -62,9 +63,11 @@ public class InscripcionController {
     private PagoService pagoService;
 
     @PostMapping("/confirmar")
+    @Transactional
     public ResponseEntity<?> confirmar(@RequestBody ConfirmacionPagoDTO datos) {
         try {
             pagoService.procesarExito(datos);
+            inscripcionService.crear(datos.getUsuarioId(), datos.getClaseId());
             return ResponseEntity.ok(Map.of("message", "Proceso completado con éxito"));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)

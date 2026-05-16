@@ -1,5 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { useSearchParams, useNavigate, Link } from 'react-router-dom';
+import Layout from '../components/Layout';
+import Spinner from '../components/Spinner';
+import '../styles/success.css';
 
 const Success = () => {
   const [searchParams] = useSearchParams();
@@ -61,58 +64,50 @@ const Success = () => {
 
   if (loading) {
     return (
-      <div style={containerStyle}>
-        <div className="spinner"></div>
-        <h2>Confirmando tu lugar en la clase...</h2>
-        <p>Estamos procesando tu pago con Mercado Pago.</p>
-      </div>
+      <Layout>
+        <div className="success-container">
+          <Spinner message="Confirmando tu lugar en la clase..." />
+        </div>
+      </Layout>
     );
   }
 
   return (
-    <div style={containerStyle}>
-      {error ? (
-        <div style={{ color: '#721c24', backgroundColor: '#f8d7da', padding: '20px', borderRadius: '8px' }}>
-          <h2>⚠ Error</h2>
-          <p>{error}</p>
-          <Link to="/">Volver al inicio</Link>
-        </div>
-      ) : (
-        <div style={{ backgroundColor: '#f0fff4', padding: '40px', borderRadius: '15px', border: '1px solid #c6f6d5' }}>
-          <h1 style={{ color: '#38a169', fontSize: '3rem' }}>✔</h1>
-          <h2 style={{ color: '#2f855a' }}>¡Inscripción Exitosa!</h2>
-          <p>Tu pago se procesó correctamente.</p>
-          <hr />
-          <p><strong>ID de Operación:</strong> {searchParams.get('payment_id')}</p>
-          <div style={{ marginTop: '20px' }}>
-            <button onClick={() => navigate('/mis-clases')} style={buttonStyle}>
-              Ver mis clases
-            </button>
+    <Layout>
+      <div className="success-container">
+        {error ? (
+          <div className="error-card">
+            <h2>⚠ Error</h2>
+            <p>{error}</p>
+            <Link to="/" className="error-btn">
+              Volver al inicio
+            </Link>
           </div>
-        </div>
-      )}
-    </div>
+        ) : (
+          <div className="success-card">
+            <h1>✔</h1>
+            <h2>¡Inscripción Exitosa!</h2>
+            <p>Tu pago se procesó correctamente.</p>
+            <hr />
+            <p>
+              <strong>ID de Operación:</strong> {searchParams.get('payment_id')}
+            </p>
+            <div className="success-actions">
+              <button
+                onClick={() => navigate('/mis-clases')}
+                className="success-btn"
+              >
+                Ver mis clases
+              </button>
+              <Link to="/" className="success-btn">
+                Volver al inicio
+              </Link>
+            </div>
+          </div>
+        )}
+      </div>
+    </Layout>
   );
-};
-
-const containerStyle: React.CSSProperties = {
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
-  justifyContent: 'center',
-  height: '80vh',
-  textAlign: 'center',
-  fontFamily: 'sans-serif'
-};
-
-const buttonStyle = {
-  backgroundColor: '#009EE3',
-  color: 'white',
-  padding: '12px 24px',
-  border: 'none',
-  borderRadius: '5px',
-  cursor: 'pointer',
-  fontSize: '16px'
-};
+}
 
 export default Success;
