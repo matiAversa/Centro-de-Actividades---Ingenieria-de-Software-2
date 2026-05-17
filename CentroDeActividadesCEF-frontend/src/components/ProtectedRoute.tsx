@@ -3,11 +3,14 @@ import { useAuth } from "../context/useAuth";
 
 type Props = {
 	children: React.ReactNode;
-	allowedRole: "ADMIN" | "SOCIO";
+	allowedRole: "ADMINISTRADOR" | "USUARIO" | "ANY";
 };
 
 const isAdminLikeRole = (role: string) =>
-	role === "ADMIN" || role === "RECEPCIONISTA";
+	role === "ADMINISTRADOR" || role === "RECEPCIONISTA" || role === "ADMIN";
+
+const isUsuarioLikeRole = (role: string) =>
+	role === "USUARIO" || role === "SOCIO";
 
 function ProtectedRoute({ children, allowedRole }: Props) {
 	const { user } = useAuth();
@@ -16,9 +19,14 @@ function ProtectedRoute({ children, allowedRole }: Props) {
 		return <Navigate to="/login" replace />;
 	}
 
+	if (allowedRole === "ANY") {
+		return <>{children}</>;
+	}
+
 	if (
 		user.role !== allowedRole &&
-		!(allowedRole === "ADMIN" && isAdminLikeRole(user.role))
+		!(allowedRole === "ADMINISTRADOR" && isAdminLikeRole(user.role)) &&
+		!(allowedRole === "USUARIO" && isUsuarioLikeRole(user.role))
 	) {
 		// If the user is authenticated but not allowed for this route,
 		// redirect them to the appropriate default page instead of login.

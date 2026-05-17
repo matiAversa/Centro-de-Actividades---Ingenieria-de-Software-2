@@ -32,14 +32,14 @@ interface Inscripcion {
 
 function Home() {
 	const { user } = useAuth();
-	const socioId = user?.socioId;
+	const usuarioId = user?.usuarioId;
 
 	const [clases, setClases] = useState<Clase[]>([]);
 	const [inscripciones, setInscripciones] = useState<Inscripcion[]>([]);
 	const [loading, setLoading] = useState(true);
 
 	useEffect(() => {
-		if (!socioId) {
+		if (!usuarioId) {
 			// eslint-disable-next-line react-hooks/set-state-in-effect
 			setLoading(false);
 			return;
@@ -51,7 +51,7 @@ function Home() {
 
 				const [clasesRes, inscripcionesRes] = await Promise.all([
 					fetch("http://localhost:8080/api/clases/proximas"),
-					fetch(`http://localhost:8080/api/inscripciones/user/${socioId}`),
+					fetch(`http://localhost:8080/api/inscripciones/user/${usuarioId}`),
 				]);
 
 				if (!clasesRes.ok) {
@@ -75,7 +75,7 @@ function Home() {
 		};
 
 		void cargarDatos();
-	}, [socioId]);
+	}, [usuarioId]);
 
 	const obtenerFechaClase = (clase: Clase) => {
 		return new Date(`${clase.fecha}T${clase.horaInicio}`);
@@ -113,11 +113,11 @@ function Home() {
 	const proximaClase =
 		proximaInscripcion?.clase?.actividad?.nombre || "Sin clases";
 
-	if (!socioId) {
+	if (!usuarioId) {
 		return (
 			<UserLayout>
 				<div className="dashboard-content">
-					<p>No se encontró el socio logueado.</p>
+					<p>No se encontró el usuario logueado.</p>
 				</div>
 			</UserLayout>
 		);
@@ -128,7 +128,7 @@ function Home() {
 			<div className="dashboard-content">
 				<div className="home-hero">
 					<div>
-						<p className="home-label">Panel del socio</p>
+						<p className="home-label">Panel del usuario</p>
 						<h2>Bienvenido al CEF</h2>
 						<p>
 							Consultá tus próximas clases, revisá tus inscripciones y seguí tu

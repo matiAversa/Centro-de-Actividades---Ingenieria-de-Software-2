@@ -4,6 +4,9 @@ import logo from "../assets/Logo.png";
 import { useAuth } from "../context/useAuth";
 import "../styles/login.css";
 
+const isAdminLikeRole = (role?: string) =>
+	role === "ADMINISTRADOR" || role === "RECEPCIONISTA" || role === "ADMIN";
+
 function Login() {
 	const navigate = useNavigate();
 
@@ -23,12 +26,12 @@ function Login() {
 			return;
 		}
 
-		if (user.role === "ADMIN" || user.role === "RECEPCIONISTA") {
+		if (isAdminLikeRole(user.role)) {
 			navigate("/dashboard");
 			return;
 		}
 
-		navigate("/home");
+		navigate("/perfil");
 	};
 
 	const handleSignin = () => {

@@ -48,7 +48,7 @@ function Clases() {
 
 	const { user } = useAuth();
 	const navigate = useNavigate();
-	const socioId = user?.socioId;
+	const usuarioId = user?.usuarioId;
 
 	useEffect(() => {
 		// eslint-disable-next-line react-hooks/immutability
@@ -89,14 +89,14 @@ function Clases() {
 	const estaInscripto = (claseId: number) => {
 		return inscripciones.some(
 			(inscripcion) =>
-				inscripcion.socio.id === socioId && inscripcion.clase?.id === claseId,
+				inscripcion.socio.id === usuarioId && inscripcion.clase?.id === claseId,
 		);
 	};
 
 	const tieneHorarioOcupado = (clase: Clase) => {
 		return inscripciones.some(
 			(inscripcion) =>
-				inscripcion.socio.id === socioId &&
+				inscripcion.socio.id === usuarioId &&
 				inscripcion.clase?.fecha === clase.fecha &&
 				inscripcion.clase?.horaInicio === clase.horaInicio &&
 				inscripcion.clase?.id !== clase.id,
@@ -183,7 +183,7 @@ function Clases() {
 						"Content-Type": "application/json",
 					},
 					body: JSON.stringify({
-						socioId,
+						socioId: usuarioId,
 						actividadId: clase.actividad.id,
 						fechaInicio: obtenerInicioMes(clase.fecha),
 						fechaFin: obtenerFinMes(clase.fecha),
@@ -267,7 +267,7 @@ function Clases() {
 
 	const fechasOrdenadas = Object.keys(clasesAgrupadas).sort();
 
-	if (!socioId) {
+	if (!usuarioId) {
 		return (
 			<UserLayout>
 				<p>Error al obtener el usuario.</p>

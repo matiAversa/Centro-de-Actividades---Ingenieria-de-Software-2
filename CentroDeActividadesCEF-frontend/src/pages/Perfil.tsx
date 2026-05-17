@@ -1,34 +1,49 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import UserLayout from "../components/UserLayout";
+import EditPerfilModal from "../components/EditPerfilModal";
 import { useAuth } from "../context/useAuth";
 import "../styles/perfil.css";
 
-interface Socio {
+const API_BASE_URL = import.meta.env.VITE_API_URL ?? "http://localhost:8080";
+
+interface Usuario {
 	id: number;
 	nombre: string;
-	correo: string;
-	telefono: string;
+	apellido: string;
+	dni: string;
 	fechaNacimiento: string;
-	estado: string;
+	genero: string;
+	telefono: string;
+	correo: string;
+	rol: string;
 }
+
+const isAdminLikeRole = (role?: string) =>
+	role === "ADMINISTRADOR" || role === "RECEPCIONISTA" || role === "ADMIN";
+
+const getRoleLabel = (role?: string) => {
+	switch (role) {
+		case "ADMINISTRADOR":
+		case "ADMIN":
+			return "Administrador";
+		case "RECEPCIONISTA":
+			return "Recepcionista";
+		default:
+			return "Usuario";
+	}
+};
 
 function Perfil() {
 	const navigate = useNavigate();
 	const { user, logout } = useAuth();
 
-	const [socio, setSocio] = useState<Socio | null>(null);
+	const [usuario, setUsuario] = useState<Usuario | null>(null);
 	const [loading, setLoading] = useState(true);
-	const [editModalOpen, setEditModalOpen] = useState(false);
-	const [savingProfile, setSavingProfile] = useState(false);
-	const [editForm, setEditForm] = useState({
-		nombre: "",
-		email: "",
-		telefono: "",
-		fechaNacimiento: "",
-	});
 
-	const socioId = user?.socioId;
+	const [isModalOpen, setIsModalOpen] = useState(false);
+
+	const usuarioId = user?.usuarioId;
 
 	useEffect(() => {
 		if (!user) {
@@ -36,149 +51,140 @@ function Perfil() {
 			return;
 		}
 
-		if (user.role === "ADMIN") {
+		if (!usuarioId) {
 			setLoading(false);
 			return;
 		}
 
 		const obtenerPerfil = async () => {
 			try {
-				const response = await fetch(
-					`http://localhost:8080/User/${socioId}`,
-				);
+				const response = await fetch(`${API_BASE_URL}/User/${usuarioId}`);
 
 				if (!response.ok) {
 					throw new Error("No se pudo obtener el perfil");
 				}
 
-				const data: Socio = await response.json();
-				setSocio(data);
+				const data: Usuario = await response.json();
+				setUsuario(data);
 			} catch (error) {
 				console.error(error);
-				alert("Error al cargar el perfil");
+				setUsuario(null);
 			} finally {
 				setLoading(false);
 			}
 		};
 
-		if (socioId) {
-			obtenerPerfil();
-		} else {
-			setLoading(false);
-		}
-	}, [user, socioId, navigate]);
+		void obtenerPerfil();
+	}, [user, usuarioId, navigate]);
 
 	const handleLogout = () => {
 		logout();
 		navigate("/login");
 	};
 
-	const abrirModalEdicion = () => {
-		if (!socio) return;
-
-		setEditForm({
-			nombre: socio.nombre || "",
-			email: socio.correo || "",
-			telefono: socio.telefono || "",
-			fechaNacimiento: socio.fechaNacimiento || "",
-		});
-		setEditModalOpen(true);
-	};
-
-	const cerrarModalEdicion = () => {
-		if (savingProfile) return;
-		setEditModalOpen(false);
-	};
-
-	const actualizarCampo = (e: React.ChangeEvent<HTMLInputElement>) => {
-		const { name, value } = e.target;
-		setEditForm((prev) => ({ ...prev, [name]: value }));
-	};
-
-	const guardarPerfil = async (e: React.FormEvent) => {
-		e.preventDefault();
-		if (!socioId || !socio) return;
-
-		if (!editForm.nombre.trim() || !editForm.email.trim()) {
-			alert("Nombre y correo son obligatorios");
-			return;
-		}
-
+	const guardarPerfil = async (formData: any) => {
+		if (!usuarioId) return;
 		try {
-			setSavingProfile(true);
+			const payload = {
+				id: usuario?.id,
+				nombre: formData.nombre,
+				apellido: formData.apellido,
+				dni: formData.dni,
+				fechaNacimiento: formData.fechaNacimiento,
+				genero: formData.genero,
+				telefono: formData.telefono,
+				correo: formData.correo,
+				rol: usuario?.rol,
+			};
 
-			const response = await fetch(
-				`http://localhost:8080/user/${socioId}`,
-				{
-					method: "PUT",
-					headers: {
-						"Content-Type": "application/json",
-					},
-					body: JSON.stringify({
-						id: socio.id,
-						nombre: editForm.nombre.trim(),
-						correo: editForm.email.trim(),
-						telefono: editForm.telefono.trim(),
-						fechaNacimiento: editForm.fechaNacimiento,
-						estado: socio.estado,
-					}),
-				},
-			);
+			const resp = await fetch(`${API_BASE_URL}/User/${usuarioId}`, {
+				method: "PUT",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify(payload),
+			});
 
-			if (!response.ok) {
-				const errorText = await response.text();
-				throw new Error(errorText || "No se pudo actualizar el perfil");
+			if (!resp.ok) {
+				const text = await resp.text();
+				throw new Error(text || "Error al guardar perfil");
 			}
 
-			const data: Socio = await response.json();
-			setSocio(data);
-			setEditModalOpen(false);
-			alert("Perfil actualizado correctamente");
+			const updated: Usuario = await resp.json();
+			setUsuario(updated);
+			setIsModalOpen(false);
 		} catch (error) {
-			console.error(error);
+			console.error("Error guardando perfil:", error);
 			alert(
-				error instanceof Error ? error.message : "Error al actualizar perfil",
+				"No se pudo guardar el perfil. Revisá los datos e intentá nuevamente.",
 			);
-		} finally {
-			setSavingProfile(false);
 		}
 	};
 
-	if (user?.role === "ADMIN") {
-		return (
-			<UserLayout>
-				<div className="dashboard-content perfil-page">
-					<div className="perfil-hero">
-						<div className="perfil-identity">
-							<div className="perfil-avatar">
-								{user.email.charAt(0).toUpperCase()}
-							</div>
+	const roleLabel = getRoleLabel(user?.role);
+	const isAdminLike = isAdminLikeRole(user?.role);
+	const nombreCompleto =
+		[usuario?.nombre, usuario?.apellido].filter(Boolean).join(" ") ||
+		user?.email ||
+		"Usuario";
 
-							<div>
-								<p className="perfil-kicker">Administrador</p>
-								<h2>Perfil de administrador</h2>
-								<p className="perfil-subtitle">
-									Herramientas y accesos rápidos de administración.
-								</p>
-							</div>
+	if (!user) {
+		return null;
+	}
+
+	return (
+		<UserLayout>
+			<div className="dashboard-content perfil-page">
+				<div className="perfil-hero">
+					<div className="perfil-identity">
+						<div className="perfil-avatar">
+							{nombreCompleto.charAt(0).toUpperCase()}
 						</div>
 
-						<span className="perfil-badge">Administrador</span>
+						<div>
+							<p className="perfil-kicker">
+								{isAdminLike ? roleLabel : "Cuenta activa"}
+							</p>
+							<h2 className="mi-perfil-blanco">
+								{isAdminLike
+									? `Perfil de ${roleLabel.toLowerCase()}`
+									: "Mi perfil"}
+							</h2>
+							<p className="perfil-subtitle">
+								{isAdminLike
+									? "Herramientas y accesos rápidos de administración."
+									: "Revisá tu información personal asociada al gimnasio."}
+							</p>
+						</div>
 					</div>
 
+					<span className="perfil-badge">{roleLabel}</span>
+				</div>
+
+				{loading ? (
+					<p>Cargando perfil...</p>
+				) : isAdminLike ? (
 					<div className="perfil-grid">
 						<section className="perfil-card perfil-card-primary">
-							<h3>Datos de administrador</h3>
+							<h3>Datos de usuario</h3>
 
 							<dl className="perfil-details">
 								<div>
+									<dt>Nombre completo</dt>
+									<dd>{nombreCompleto}</dd>
+								</div>
+
+								<div>
 									<dt>Correo</dt>
-									<dd>{user.email}</dd>
+									<dd>{usuario?.correo || user.email}</dd>
+								</div>
+
+								<div>
+									<dt>DNI</dt>
+									<dd>{usuario?.dni || "Sin cargar"}</dd>
 								</div>
 
 								<div>
 									<dt>Rol</dt>
-									<dd>Administrador</dd>
+									<dd>{roleLabel}</dd>
 								</div>
 							</dl>
 						</section>
@@ -200,7 +206,7 @@ function Perfil() {
 									className="perfil-action-button"
 									onClick={() => navigate("/socios")}
 								>
-									Gestionar socios
+									Gestionar usuarios
 								</button>
 
 								<button
@@ -213,74 +219,58 @@ function Perfil() {
 							</div>
 						</section>
 					</div>
-				</div>
-			</UserLayout>
-		);
-	}
-
-	if (!socioId) {
-		return (
-			<UserLayout>
-				<div className="dashboard-content">
-					<p>Error al obtener el usuario.</p>
-				</div>
-			</UserLayout>
-		);
-	}
-
-	return (
-		<UserLayout>
-			<div className="dashboard-content perfil-page">
-				<div className="perfil-hero">
-					<div className="perfil-identity">
-						<div className="perfil-avatar">
-							{socio?.nombre?.charAt(0).toUpperCase() ??
-								user?.email?.charAt(0).toUpperCase() ??
-								"U"}
-						</div>
-
-						<div>
-							<p className="perfil-kicker">Cuenta activa</p>
-							<h2 className="mi-perfil-blanco">Mi Perfil</h2>
-							<p className="perfil-subtitle">
-								Revisá tu información personal asociada al gimnasio.
-							</p>
-						</div>
-					</div>
-
-					<span className="perfil-badge">Socio</span>
-				</div>
-
-				{loading ? (
-					<p>Cargando perfil...</p>
-				) : !socio ? (
-					<p>No se encontró información del socio.</p>
-				) : (
+				) : usuario ? (
 					<div className="perfil-grid">
 						<section className="perfil-card perfil-card-primary">
-							<h3>Datos personales</h3>
+							<>
+								<div
+									style={{
+										display: "flex",
+										justifyContent: "space-between",
+										alignItems: "center",
+									}}
+								></div>
+								<dl className="perfil-details">
+									<div>
+										<h3>Datos personales</h3>
+										<dt>Nombre</dt>
+										<dd>{usuario.nombre}</dd>
+									</div>
 
-							<dl className="perfil-details">
-								<div>
-									<dt>Nombre</dt>
-									<dd>{socio.nombre}</dd>
-								</div>
+									<div>
+										<dt>Apellido</dt>
+										<dd>{usuario.apellido || "Sin cargar"}</dd>
+									</div>
 
-								<div>
-									<dt>Correo electrónico</dt>
-									<dd>{socio.correo}</dd>
-								</div>
+									<div>
+										<dt>Correo electrónico</dt>
+										<div
+											style={{
+												display: "flex",
+												justifyContent: "space-between",
+												alignItems: "center",
+											}}
+										></div>
+										<dd>{usuario.fechaNacimiento || "Sin cargar"}</dd>
+									</div>
 
-								<div>
-									<dt>Teléfono</dt>
-									<dd>{socio.telefono || "Sin cargar"}</dd>
-								</div>
+									<div>
+										<dt>Género</dt>
+										<dd>{usuario.genero || "Sin cargar"}</dd>
+									</div>
 
-								<div>
-									<dt>Fecha de nacimiento</dt>
-									<dd>{socio.fechaNacimiento || "Sin cargar"}</dd>
-								</div>
-							</dl>
+									<div>
+										<dt>Rol</dt>
+										<dd>{roleLabel}</dd>
+									</div>
+								</dl>
+								<EditPerfilModal
+									isOpen={isModalOpen}
+									onClose={() => setIsModalOpen(false)}
+									usuario={usuario}
+									onSave={guardarPerfil}
+								/>
+							</>
 						</section>
 
 						<section className="perfil-card">
@@ -291,14 +281,6 @@ function Perfil() {
 							</p>
 
 							<div className="perfil-actions">
-								<button
-									type="button"
-									className="perfil-action-button perfil-action-button-secondary"
-									onClick={abrirModalEdicion}
-								>
-									Editar perfil
-								</button>
-
 								<button
 									type="button"
 									className="perfil-action-button perfil-action-button-secondary"
@@ -314,6 +296,13 @@ function Perfil() {
 								>
 									Ver clases
 								</button>
+								<button
+									type="button"
+									className="perfil-action-button"
+									onClick={() => setIsModalOpen(true)}
+								>
+									Editar perfil
+								</button>
 
 								<button
 									type="button"
@@ -325,90 +314,8 @@ function Perfil() {
 							</div>
 						</section>
 					</div>
-				)}
-
-				{editModalOpen && socio && (
-					<div className="perfil-modal-overlay">
-						<div className="perfil-modal-card">
-							<div className="perfil-modal-header">
-								<h3>Editar perfil</h3>
-								<button
-									type="button"
-									className="perfil-modal-close"
-									onClick={cerrarModalEdicion}
-									aria-label="Cerrar modal"
-								>
-									✕
-								</button>
-							</div>
-
-							<form className="perfil-modal-form" onSubmit={guardarPerfil}>
-								<div className="perfil-modal-field">
-									<label htmlFor="perfil-nombre">Nombre</label>
-									<input
-										id="perfil-nombre"
-										name="nombre"
-										type="text"
-										value={editForm.nombre}
-										onChange={actualizarCampo}
-										required
-									/>
-								</div>
-
-								<div className="perfil-modal-field">
-									<label htmlFor="perfil-email">Correo</label>
-									<input
-										id="perfil-email"
-										name="email"
-										type="email"
-										value={editForm.email}
-										onChange={actualizarCampo}
-										required
-									/>
-								</div>
-
-								<div className="perfil-modal-field">
-									<label htmlFor="perfil-telefono">Teléfono</label>
-									<input
-										id="perfil-telefono"
-										name="telefono"
-										type="text"
-										value={editForm.telefono}
-										onChange={actualizarCampo}
-									/>
-								</div>
-
-								<div className="perfil-modal-field">
-									<label htmlFor="perfil-fecha">Fecha de nacimiento</label>
-									<input
-										id="perfil-fecha"
-										name="fechaNacimiento"
-										type="date"
-										value={editForm.fechaNacimiento}
-										onChange={actualizarCampo}
-									/>
-								</div>
-
-								<div className="perfil-modal-actions">
-									<button
-										type="button"
-										className="perfil-modal-btn perfil-modal-btn-secondary"
-										onClick={cerrarModalEdicion}
-										disabled={savingProfile}
-									>
-										Cancelar
-									</button>
-									<button
-										type="submit"
-										className="perfil-modal-btn perfil-modal-btn-primary"
-										disabled={savingProfile}
-									>
-										{savingProfile ? "Guardando..." : "Guardar cambios"}
-									</button>
-								</div>
-							</form>
-						</div>
-					</div>
+				) : (
+					<p>No se encontró información del usuario.</p>
 				)}
 			</div>
 		</UserLayout>

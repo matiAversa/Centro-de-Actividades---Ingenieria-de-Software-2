@@ -1,17 +1,36 @@
 import { createContext, useState } from "react";
 const API_BASE_URL = import.meta.env.VITE_API_URL ?? "http://localhost:8080";
 
-type UserRole = "ADMIN" | "SOCIO" | "RECEPCIONISTA";
+type UserRole = "ADMINISTRADOR" | "RECEPCIONISTA" | "USUARIO";
 
 type User = {
 	email: string;
 	role: UserRole;
-	socioId?: number;
+	usuarioId?: number;
 };
 
 type LoginResponse = {
 	userId: number;
 	rol: string;
+};
+
+const normalizeRole = (role?: string): UserRole | null => {
+	switch (role) {
+		case "1":
+		case "ADMIN":
+		case "ADMINISTRADOR":
+		case "ADMINISTRADOS":
+			return "ADMINISTRADOR";
+		case "2":
+		case "RECEPCIONISTA":
+			return "RECEPCIONISTA";
+		case "3":
+		case "USUARIO":
+		case "SOCIO":
+			return "USUARIO";
+		default:
+			return null;
+	}
 };
 
 type AuthContextType = {
@@ -26,50 +45,67 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 	const [user, setUser] = useState<User | null>(() => {
 		const savedUser = localStorage.getItem("user");
 
-		return savedUser ? JSON.parse(savedUser) : null;
+		if (!savedUser) {
+			return null;
+		}
+
+		try {
+			const parsedUser = JSON.parse(savedUser) as User & {
+				role?: string;
+				usuarioId?: number;
+				socioId?: number;
+			};
+			const role = normalizeRole(parsedUser.role);
+
+			if (!role) {
+				return null;
+			}
+
+			return {
+				...parsedUser,
+				role,
+				usuarioId: parsedUser.usuarioId ?? parsedUser.socioId,
+			};
+		} catch {
+			return null;
+		}
 	});
 
-	const login = async (email: string, password: string): Promise<User | null> => {
-    try {
-        const response: Response = await fetch(`${API_BASE_URL}/User/Login`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email, password }),
-        });
+	const login = async (
+		email: string,
+		password: string,
+	): Promise<User | null> => {
+		try {
+			const response: Response = await fetch(`${API_BASE_URL}/User/Login`, {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ email, password }),
+			});
 
-        if (response.ok) {
-            const data: LoginResponse = await response.json();
-            const rolNum = data.rol; 
+			if (response.ok) {
+				const data: LoginResponse = await response.json();
+				const role = normalizeRole(data.rol);
 
-            let role: UserRole;
-            switch (rolNum) {
-                case "1":
-                    role = "ADMIN";
-                    break;
-                case "2":
-                    role = "RECEPCIONISTA";
-                    break;
-                case "5":
-                    role = "SOCIO";
-                    break;
-                default:
-                    console.error("Rol desconocido:", rolNum);
-                    return null;
-            }
+				if (!role) {
+					console.error("Rol desconocido:", data.rol);
+					return null;
+				}
 
-            const loggedUser: User = { email, role, socioId: data.userId };
-            setUser(loggedUser);
-            localStorage.setItem("user", JSON.stringify(loggedUser));
-            return loggedUser;
-        } else {
-            console.error("Error en las credenciales o el servidor respondió con error");
-            return null;
-        }
-    } catch (error) {
-        console.error("Error de red en el login:", error);
-        return null;
-    }
-};
+				const loggedUser: User = { email, role, usuarioId: data.userId };
+				setUser(loggedUser);
+				localStorage.setItem("user", JSON.stringify(loggedUser));
+				return loggedUser;
+			} else {
+				console.error(
+					"Error en las credenciales o el servidor respondió con error",
+				);
+				return null;
+			}
+		} catch (error) {
+			console.error("Error de red en el login:", error);
+			return null;
+		}
+	};
 
 	const logout = () => {
 		setUser(null);
