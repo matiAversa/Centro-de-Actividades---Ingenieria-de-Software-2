@@ -3,10 +3,10 @@ package com.tekio.CentroDeActividadesCEF.Services;
 import com.tekio.CentroDeActividadesCEF.DTO.InscripcionMensualRequest;
 import com.tekio.CentroDeActividadesCEF.Entities.Clase;
 import com.tekio.CentroDeActividadesCEF.Entities.Inscripcion;
-import com.tekio.CentroDeActividadesCEF.Entities.Socio;
+import com.tekio.CentroDeActividadesCEF.Entities.Usuario;
 import com.tekio.CentroDeActividadesCEF.Repositories.ClaseRepository;
 import com.tekio.CentroDeActividadesCEF.Repositories.InscripcionRepository;
-import com.tekio.CentroDeActividadesCEF.Repositories.SocioRepository;
+import com.tekio.CentroDeActividadesCEF.Repositories.UsuarioRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
@@ -17,15 +17,15 @@ import java.util.List;
 public class InscripcionService {
 
     private final InscripcionRepository inscripcionRepository;
-    private final SocioRepository socioRepository;
+    private final UsuarioRepository usuarioRepository;
     private final ClaseRepository claseRepository;
 
     public InscripcionService(
             InscripcionRepository inscripcionRepository,
-            SocioRepository socioRepository,
+            UsuarioRepository usuarioRepository,
             ClaseRepository claseRepository) {
         this.inscripcionRepository = inscripcionRepository;
-        this.socioRepository = socioRepository;
+        this.usuarioRepository = usuarioRepository;
         this.claseRepository = claseRepository;
     }
 
@@ -34,8 +34,8 @@ public class InscripcionService {
     }
 
     public List<Inscripcion> obtenerPorSocio(
-            Long socioId) {
-        Socio socio = socioRepository.findById(socioId)
+            Integer socioId) {
+        Usuario socio = usuarioRepository.findById(socioId)
                 .orElseThrow(() -> new RuntimeException(
                         "Socio no encontrado"));
 
@@ -44,14 +44,14 @@ public class InscripcionService {
     }
 
     public Inscripcion crear(
-            Long socioId,
-            Long claseId) {
+            Integer socioId,
+            Integer claseId) {
 
-        Socio socio = socioRepository.findById(socioId)
+        Usuario socio = usuarioRepository.findById(socioId)
                 .orElseThrow(() -> new RuntimeException(
                         "Socio no encontrado"));
 
-        Clase clase = claseRepository.findById(claseId)
+        Clase clase = claseRepository.findById(claseId.longValue())
                 .orElseThrow(() -> new RuntimeException(
                         "Clase no encontrada"));
 
@@ -66,7 +66,7 @@ public class InscripcionService {
 
         Inscripcion inscripcion = new Inscripcion();
 
-        inscripcion.setSocio(socio);
+        inscripcion.setUsuario(socio);
         inscripcion.setClase(clase);
 
         inscripcion.setFechaInscripcion(
@@ -83,7 +83,7 @@ public class InscripcionService {
     public List<Inscripcion> crearMensual(
             InscripcionMensualRequest request) {
 
-        Socio socio = socioRepository.findById(
+        Usuario socio = usuarioRepository.findById(
                 request.getSocioId())
                 .orElseThrow(() -> new RuntimeException(
                         "Socio no encontrado"));
@@ -116,7 +116,7 @@ public class InscripcionService {
 
                     Inscripcion inscripcion = new Inscripcion();
 
-                    inscripcion.setSocio(
+                    inscripcion.setUsuario(
                             socio);
 
                     inscripcion.setClase(
@@ -135,7 +135,7 @@ public class InscripcionService {
     }
 
     private void validarInscripcion(
-            Socio socio,
+            Usuario socio,
             Clase clase) {
 
         if (clase.getCuposDisponibles() == null

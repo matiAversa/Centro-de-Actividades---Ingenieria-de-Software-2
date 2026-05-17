@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Locale;
+import java.util.Optional;
 
 @Service
 public class UsuarioService {
@@ -76,8 +77,12 @@ public class UsuarioService {
     }
 
     public Usuario encontrarConCorreo (String mail){
-
         return this.usuarioRepository.findByCorreo(mail);
+    }
+
+    public Usuario buscarPorId(Integer id) {
+        return this.usuarioRepository.findById(id)
+                .orElseThrow();
     }
 
 }

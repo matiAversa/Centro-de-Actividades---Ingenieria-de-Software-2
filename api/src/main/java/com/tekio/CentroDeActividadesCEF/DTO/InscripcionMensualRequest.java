@@ -4,16 +4,16 @@ import java.time.LocalDate;
 
 public class InscripcionMensualRequest {
 
-    private Long socioId;
+    private Integer socioId;
     private Long actividadId;
     private LocalDate fechaInicio;
     private LocalDate fechaFin;
 
-    public Long getSocioId() {
+    public Integer getSocioId() {
         return socioId;
     }
 
-    public void setSocioId(Long socioId) {
+    public void setSocioId(Integer socioId) {
         this.socioId = socioId;
     }
 

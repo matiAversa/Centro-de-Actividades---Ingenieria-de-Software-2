@@ -1,10 +1,7 @@
 package com.tekio.CentroDeActividadesCEF.Controllers;
 
 import com.tekio.CentroDeActividadesCEF.DTO.DashboardResumenResponse;
-import com.tekio.CentroDeActividadesCEF.Repositories.ActividadRepository;
-import com.tekio.CentroDeActividadesCEF.Repositories.ClaseRepository;
-import com.tekio.CentroDeActividadesCEF.Repositories.InscripcionRepository;
-import com.tekio.CentroDeActividadesCEF.Repositories.SocioRepository;
+import com.tekio.CentroDeActividadesCEF.Repositories.*;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,17 +12,17 @@ import org.springframework.web.bind.annotation.RestController;
 @CrossOrigin(origins = "http://localhost:5173")
 public class DashboardController {
 
-    private final SocioRepository socioRepository;
+    private final UsuarioRepository usuarioRepository;
     private final ActividadRepository actividadRepository;
     private final InscripcionRepository inscripcionRepository;
     private final ClaseRepository claseRepository;
 
     public DashboardController(
-            SocioRepository socioRepository,
+            UsuarioRepository usuarioRepository,
             ActividadRepository actividadRepository,
             InscripcionRepository inscripcionRepository,
             ClaseRepository claseRepository) {
-        this.socioRepository = socioRepository;
+        this.usuarioRepository = usuarioRepository;
         this.actividadRepository = actividadRepository;
         this.inscripcionRepository = inscripcionRepository;
         this.claseRepository = claseRepository;
@@ -34,7 +31,7 @@ public class DashboardController {
     @GetMapping("/resumen")
     public DashboardResumenResponse obtenerResumen() {
         return new DashboardResumenResponse(
-                socioRepository.countByEstadoIgnoreCase("Activo"),
+                usuarioRepository.countByEstadoIgnoreCase("Activo"),
                 actividadRepository.count(),
                 inscripcionRepository.count(),
                 claseRepository.countByCuposDisponiblesLessThanEqual(0));

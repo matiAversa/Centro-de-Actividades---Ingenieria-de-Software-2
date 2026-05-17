@@ -1,10 +1,7 @@
 package com.tekio.CentroDeActividadesCEF.Controllers;
 
 import com.tekio.CentroDeActividadesCEF.Auxiliar.VerificationCode;
-import com.tekio.CentroDeActividadesCEF.DTO.CrearUsuarioRequest;
-import com.tekio.CentroDeActividadesCEF.DTO.LoginDTO;
-import com.tekio.CentroDeActividadesCEF.DTO.MailConCodigo;
-import com.tekio.CentroDeActividadesCEF.DTO.SignUpRequest;
+import com.tekio.CentroDeActividadesCEF.DTO.*;
 import com.tekio.CentroDeActividadesCEF.Entities.Usuario;
 import com.tekio.CentroDeActividadesCEF.Services.EmailService;
 import com.tekio.CentroDeActividadesCEF.Services.UsuarioPendienteService;
@@ -128,7 +125,7 @@ public class UsuarioController {
     }
 
     @PostMapping ("/Login")
-    public ResponseEntity<String> Login (@RequestBody LoginDTO body ){
+    public ResponseEntity<?> Login (@RequestBody LoginDTO body ){
 
         try {
             System.out.println(body.toString());
@@ -137,7 +134,7 @@ public class UsuarioController {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("no existe el usuario");
             }
             if (user.compararPasswords(body.getPassword())){
-                return ResponseEntity.status(HttpStatus.OK).body(user.getRol());
+                return ResponseEntity.status(HttpStatus.OK).body(new LoginResponseDTO(user.getId(), user.getRol()));
             }
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("password incorrecta");
         } catch (Exception e){
@@ -146,6 +143,28 @@ public class UsuarioController {
         }
 
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getUsuario(@PathVariable Integer id) {
+        Usuario u = usuarioService.buscarPorId(id);
+        if (u == null) {
+            return ResponseEntity.notFound().build();
+        }
+        UsuarioDTO dto = new UsuarioDTO(
+                u.getId(),
+                u.getNombre(),
+                u.getApellido(),
+                u.getDni(),
+                u.getFechaNacimiento(),
+                u.getGenero().getNombreGenero(),
+                u.getTelefono(),
+                u.getCorreo(),
+                u.getRol()
+        );
+        return ResponseEntity.ok(dto);
+    }
+
+
 
 
 }

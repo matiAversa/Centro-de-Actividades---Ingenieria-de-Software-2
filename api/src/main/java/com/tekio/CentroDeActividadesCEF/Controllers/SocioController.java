@@ -1,4 +1,4 @@
-package com.tekio.CentroDeActividadesCEF.Controllers;
+/*package com.tekio.CentroDeActividadesCEF.Controllers;
 
 import com.tekio.CentroDeActividadesCEF.Entities.Socio;
 import com.tekio.CentroDeActividadesCEF.Services.SocioService;
@@ -45,3 +45,5 @@ public class SocioController {
         socioService.eliminar(id);
     }
 }
+
+ */

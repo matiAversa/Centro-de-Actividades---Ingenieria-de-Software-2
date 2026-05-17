@@ -27,7 +27,7 @@ public class Pago {
 
     @ManyToOne
     @JoinColumn(name = "usuario_id", nullable = false)
-    private Socio socio;
+    private Usuario socio;
 
     @ManyToOne
     @JoinColumn(name = "clase_id", nullable = true)
@@ -36,7 +36,7 @@ public class Pago {
     public Pago() {
     }
 
-    public Pago(String mpPaymentId, Double monto, String estado, Socio socio) {
+    public Pago(String mpPaymentId, Double monto, String estado, Usuario socio) {
         this.mpPaymentId = mpPaymentId;
         this.monto = monto;
         this.estado = estado;
@@ -60,8 +60,8 @@ public class Pago {
     public String getEstado() { return estado; }
     public void setEstado(String estado) { this.estado = estado; }
 
-    public Socio getSocio() { return socio; }
-    public void setSocio(Socio socio) { this.socio = socio; }
+    public Usuario getSocio() { return socio; }
+    public void setSocio(Usuario socio) { this.socio = socio; }
 
     public String getMetodo() { return metodo; }
     public void setMetodo(String metodo) { this.metodo = metodo; }
