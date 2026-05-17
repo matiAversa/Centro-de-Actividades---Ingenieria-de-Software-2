@@ -51,7 +51,7 @@ function Home() {
 
 				const [clasesRes, inscripcionesRes] = await Promise.all([
 					fetch("http://localhost:8080/api/clases/proximas"),
-					fetch(`http://localhost:8080/api/inscripciones/socio/${socioId}`),
+					fetch(`http://localhost:8080/api/inscripciones/user/${socioId}`),
 				]);
 
 				if (!clasesRes.ok) {

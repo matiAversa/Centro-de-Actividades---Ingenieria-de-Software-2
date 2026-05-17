@@ -31,17 +31,17 @@ public class InscripcionController {
         return inscripcionService.obtenerTodas();
     }
 
-    @GetMapping("/socio/{socioId}")
+    @GetMapping("/user/{socioId}")
     public List<Inscripcion> obtenerPorSocio(
-            @PathVariable Long socioId) {
+            @PathVariable Integer socioId) {
         return inscripcionService.obtenerPorSocio(
                 socioId);
     }
 
     @PostMapping
     public Inscripcion crear(
-            @RequestParam Long socioId,
-            @RequestParam Long claseId) {
+            @RequestParam Integer socioId,
+            @RequestParam Integer claseId) {
         return inscripcionService.crear(
                 socioId,
                 claseId);

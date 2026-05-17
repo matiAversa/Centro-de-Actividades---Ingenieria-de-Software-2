@@ -1,3 +1,4 @@
+/*
 package com.tekio.CentroDeActividadesCEF.Entities;
 
 import jakarta.persistence.*;
@@ -97,3 +98,5 @@ public class Socio {
         this.estado = estado;
     }
 }
+
+ */

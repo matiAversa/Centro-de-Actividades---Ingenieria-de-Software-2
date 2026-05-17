@@ -11,7 +11,7 @@ public class Inscripcion {
     private Long id;
 
     @ManyToOne
-    private Socio socio;
+    private Usuario socio;
 
     @ManyToOne
     @JoinColumn(name = "clase_id")
@@ -26,7 +26,7 @@ public class Inscripcion {
 
     public Inscripcion(
             Long id,
-            Socio socio,
+            Usuario socio,
             Clase clase,
             String fechaInscripcion,
             String estadoPago) {
@@ -41,7 +41,7 @@ public class Inscripcion {
         return id;
     }
 
-    public Socio getSocio() {
+    public Usuario getusuario() {
         return socio;
     }
 
@@ -61,7 +61,7 @@ public class Inscripcion {
         this.id = id;
     }
 
-    public void setSocio(Socio socio) {
+    public void setUsuario(Usuario socio) {
         this.socio = socio;
     }
 
@@ -75,5 +75,9 @@ public class Inscripcion {
 
     public void setEstadoPago(String estadoPago) {
         this.estadoPago = estadoPago;
+    }
+
+    public Usuario getSocio() {
+        return socio;
     }
 }

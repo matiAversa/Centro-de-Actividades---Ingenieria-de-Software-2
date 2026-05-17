@@ -1,13 +1,10 @@
 package com.tekio.CentroDeActividadesCEF.Services;
 import com.tekio.CentroDeActividadesCEF.DTO.ConfirmacionPagoDTO;
-import com.tekio.CentroDeActividadesCEF.Entities.Clase;
-import com.tekio.CentroDeActividadesCEF.Entities.Inscripcion;
-import com.tekio.CentroDeActividadesCEF.Entities.Pago;
-import com.tekio.CentroDeActividadesCEF.Entities.Socio;
+import com.tekio.CentroDeActividadesCEF.Entities.*;
 import com.tekio.CentroDeActividadesCEF.Repositories.ClaseRepository;
 import com.tekio.CentroDeActividadesCEF.Repositories.InscripcionRepository;
 import com.tekio.CentroDeActividadesCEF.Repositories.PagoRepository;
-import com.tekio.CentroDeActividadesCEF.Repositories.SocioRepository;
+import com.tekio.CentroDeActividadesCEF.Repositories.UsuarioRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +23,7 @@ public class PagoService {
     private InscripcionRepository inscripcionRepository;
 
     @Autowired
-    private SocioRepository socioRepository;
+    private UsuarioRepository usuarioRepository;
 
     @Autowired
     private ClaseRepository claseRepository;
@@ -36,10 +33,11 @@ public class PagoService {
         if (pagoRepository.findByMpPaymentId(datos.getPaymentId()).isPresent()) {
             return;
         }
-        Socio socio = socioRepository.findById(datos.getUsuarioId())
-                .orElseThrow(() -> new EntityNotFoundException("Socio no encontrado"));
+        Usuario socio = usuarioRepository.findById(datos.getUsuarioId())
+                .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado"));
 
-        Clase clase = claseRepository.findById(datos.getClaseId())
+
+        Clase clase = claseRepository.findById(datos.getClaseId().longValue())
                 .orElseThrow(() -> new EntityNotFoundException("Clase no encontrada"));
 
         Pago nuevoPago = new Pago();

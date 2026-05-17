@@ -46,7 +46,7 @@ function MisInscripciones() {
 		const obtenerInscripciones = async () => {
 			try {
 				const response = await fetch(
-					`http://localhost:8080/api/inscripciones/socio/${socioId}`,
+					`http://localhost:8080/api/inscripciones/user/${socioId}`,
 				);
 
 				if (!response.ok) {

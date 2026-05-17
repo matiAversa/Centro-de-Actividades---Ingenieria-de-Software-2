@@ -1,3 +1,4 @@
+/*
 package com.tekio.CentroDeActividadesCEF.Services;
 
 import com.tekio.CentroDeActividadesCEF.Entities.Socio;
@@ -54,3 +55,5 @@ public class SocioService {
         socioRepository.deleteById(id);
     }
 }
+
+ */

@@ -1,3 +1,4 @@
+/*
 package com.tekio.CentroDeActividadesCEF.Repositories;
 
 import com.tekio.CentroDeActividadesCEF.Entities.Socio;
@@ -7,3 +8,5 @@ public interface SocioRepository extends JpaRepository<Socio, Long> {
 
 	long countByEstadoIgnoreCase(String estado);
 }
+
+ */

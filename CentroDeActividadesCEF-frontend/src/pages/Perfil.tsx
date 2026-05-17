@@ -7,10 +7,9 @@ import "../styles/perfil.css";
 interface Socio {
 	id: number;
 	nombre: string;
-	email: string;
+	correo: string;
 	telefono: string;
 	fechaNacimiento: string;
-	cuota: string;
 	estado: string;
 }
 
@@ -45,7 +44,7 @@ function Perfil() {
 		const obtenerPerfil = async () => {
 			try {
 				const response = await fetch(
-					`http://localhost:8080/api/socios/${socioId}`,
+					`http://localhost:8080/User/${socioId}`,
 				);
 
 				if (!response.ok) {
@@ -79,7 +78,7 @@ function Perfil() {
 
 		setEditForm({
 			nombre: socio.nombre || "",
-			email: socio.email || "",
+			email: socio.correo || "",
 			telefono: socio.telefono || "",
 			fechaNacimiento: socio.fechaNacimiento || "",
 		});
@@ -109,7 +108,7 @@ function Perfil() {
 			setSavingProfile(true);
 
 			const response = await fetch(
-				`http://localhost:8080/api/socios/${socioId}`,
+				`http://localhost:8080/user/${socioId}`,
 				{
 					method: "PUT",
 					headers: {
@@ -118,10 +117,9 @@ function Perfil() {
 					body: JSON.stringify({
 						id: socio.id,
 						nombre: editForm.nombre.trim(),
-						email: editForm.email.trim(),
+						correo: editForm.email.trim(),
 						telefono: editForm.telefono.trim(),
 						fechaNacimiento: editForm.fechaNacimiento,
-						cuota: socio.cuota,
 						estado: socio.estado,
 					}),
 				},
@@ -270,7 +268,7 @@ function Perfil() {
 
 								<div>
 									<dt>Correo electrónico</dt>
-									<dd>{socio.email}</dd>
+									<dd>{socio.correo}</dd>
 								</div>
 
 								<div>
@@ -281,16 +279,6 @@ function Perfil() {
 								<div>
 									<dt>Fecha de nacimiento</dt>
 									<dd>{socio.fechaNacimiento || "Sin cargar"}</dd>
-								</div>
-
-								<div>
-									<dt>Cuota</dt>
-									<dd>{socio.cuota || "Sin cargar"}</dd>
-								</div>
-
-								<div>
-									<dt>Estado</dt>
-									<dd>{socio.estado || "Sin cargar"}</dd>
 								</div>
 							</dl>
 						</section>

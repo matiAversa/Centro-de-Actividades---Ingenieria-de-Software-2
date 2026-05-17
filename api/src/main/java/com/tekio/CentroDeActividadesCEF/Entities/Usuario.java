@@ -12,7 +12,7 @@ public class Usuario {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer userId;
+    private Integer Id;
 
     @NotNull
     private String nombre;
@@ -28,7 +28,7 @@ public class Usuario {
 
     @NotNull
     @JoinColumn(name = "idGenero", nullable = false)
-    @ManyToOne (fetch = FetchType.LAZY, optional = false)
+    @ManyToOne (fetch = FetchType.EAGER, optional = false)
     private Genero genero;
 
     @NotNull
@@ -42,9 +42,11 @@ public class Usuario {
     private String contrasena;
 
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "idRol", nullable = false)
     private Rol rol;
+
+    private String estado;
 
 
     @OneToOne(mappedBy = "usuario", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
@@ -80,7 +82,35 @@ public class Usuario {
         return this.rol.getIdRol().toString();
     }
 
-    public Integer getUserId() {
-        return userId;
+    public Integer getId() {
+        return this.Id;
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public String getApellido() {
+        return apellido;
+    }
+
+    public String getDni() {
+        return dni;
+    }
+
+    public String getFechaNacimiento() {
+        return fechaNacimiento;
+    }
+
+    public Genero getGenero() {
+        return genero;
+    }
+
+    public String getTelefono() {
+        return telefono;
+    }
+
+    public String getCorreo() {
+        return correo;
     }
 }

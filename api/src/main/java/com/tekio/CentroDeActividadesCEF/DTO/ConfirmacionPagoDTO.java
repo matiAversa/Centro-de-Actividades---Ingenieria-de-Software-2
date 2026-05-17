@@ -8,8 +8,8 @@ public class ConfirmacionPagoDTO implements Serializable {
     private String status;
     private Long externalReference;
     private Double monto;
-    private Long usuarioId;
-    private Long claseId;
+    private Integer usuarioId;
+    private Integer claseId;
 
     public ConfirmacionPagoDTO() {
     }
@@ -46,19 +46,19 @@ public class ConfirmacionPagoDTO implements Serializable {
         this.monto = monto;
     }
 
-    public Long getUsuarioId() {
+    public Integer getUsuarioId() {
         return usuarioId;
     }
 
-    public void setUsuarioId(Long usuarioId) {
+    public void setUsuarioId(Integer usuarioId) {
         this.usuarioId = usuarioId;
     }
 
-    public Long getClaseId() {
+    public Integer getClaseId() {
         return claseId;
     }
 
-    public void setClaseId(Long claseId) {
+    public void setClaseId(Integer claseId) {
         this.claseId = claseId;
     }
 }
