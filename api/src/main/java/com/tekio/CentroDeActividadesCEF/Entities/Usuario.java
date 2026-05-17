@@ -1,6 +1,8 @@
 package com.tekio.CentroDeActividadesCEF.Entities;
 import jakarta.persistence.*;
 import org.antlr.v4.runtime.misc.NotNull;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Locale;
 
@@ -69,4 +71,12 @@ public class Usuario {
 
     }
 
+    public Boolean compararPasswords (String pass){
+        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        return passwordEncoder.matches(this.contrasena, pass);
+    }
+
+    public String getRol (){
+        return this.rol.getIdRol().toString();
+    }
 }

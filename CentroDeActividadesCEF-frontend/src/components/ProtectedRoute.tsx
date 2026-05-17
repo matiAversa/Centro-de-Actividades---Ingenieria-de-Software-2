@@ -6,6 +6,9 @@ type Props = {
 	allowedRole: "ADMIN" | "SOCIO";
 };
 
+const isAdminLikeRole = (role: string) =>
+	role === "ADMIN" || role === "RECEPCIONISTA";
+
 function ProtectedRoute({ children, allowedRole }: Props) {
 	const { user } = useAuth();
 
@@ -13,10 +16,13 @@ function ProtectedRoute({ children, allowedRole }: Props) {
 		return <Navigate to="/login" replace />;
 	}
 
-	if (user.role !== allowedRole) {
+	if (
+		user.role !== allowedRole &&
+		!(allowedRole === "ADMIN" && isAdminLikeRole(user.role))
+	) {
 		// If the user is authenticated but not allowed for this route,
 		// redirect them to the appropriate default page instead of login.
-		const fallback = user.role === "ADMIN" ? "/dashboard" : "/perfil";
+		const fallback = isAdminLikeRole(user.role) ? "/dashboard" : "/perfil";
 
 		return <Navigate to={fallback} replace />;
 	}

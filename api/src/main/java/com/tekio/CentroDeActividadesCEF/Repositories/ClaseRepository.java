@@ -15,4 +15,6 @@ public interface ClaseRepository extends JpaRepository<Clase, Long> {
             Long actividadId,
             LocalDate fechaInicio,
             LocalDate fechaFin);
+
+        long countByCuposDisponiblesLessThanEqual(Integer cuposDisponibles);
 }

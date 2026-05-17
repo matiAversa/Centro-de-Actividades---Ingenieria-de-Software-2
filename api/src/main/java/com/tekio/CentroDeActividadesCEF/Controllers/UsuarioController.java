@@ -1,8 +1,11 @@
 package com.tekio.CentroDeActividadesCEF.Controllers;
 
 import com.tekio.CentroDeActividadesCEF.Auxiliar.VerificationCode;
+import com.tekio.CentroDeActividadesCEF.DTO.CrearUsuarioRequest;
+import com.tekio.CentroDeActividadesCEF.DTO.LoginDTO;
 import com.tekio.CentroDeActividadesCEF.DTO.MailConCodigo;
 import com.tekio.CentroDeActividadesCEF.DTO.SignUpRequest;
+import com.tekio.CentroDeActividadesCEF.Entities.Usuario;
 import com.tekio.CentroDeActividadesCEF.Services.EmailService;
 import com.tekio.CentroDeActividadesCEF.Services.UsuarioPendienteService;
 import com.tekio.CentroDeActividadesCEF.Services.UsuarioService;
@@ -44,8 +47,7 @@ public class UsuarioController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("El usuario debe ser mayor de 14 años de edad.");
 
         }
-        VerificationCode generadorCodigo = new VerificationCode();
-        String codigoCorreo = generadorCodigo.generarCodigoCorreo();
+        String codigoCorreo = VerificationCode.generarCodigoCorreo();
         this.usuarioPendienteService.almacenarUsuario(body, codigoCorreo);
         this.emailService.sendVerificationCode(body.getCorreo(), codigoCorreo);
         return ResponseEntity.status(HttpStatus.OK).body(body.getCorreo());
@@ -100,8 +102,7 @@ public class UsuarioController {
         String correo = body.getCorreo();
         try{
 
-            VerificationCode generadorCodigo = new VerificationCode();
-            String nuevoCodigoCorreo = generadorCodigo.generarCodigoCorreo();
+            String nuevoCodigoCorreo = VerificationCode.generarCodigoCorreo();
             this.usuarioPendienteService.actualizarCodigo(correo, nuevoCodigoCorreo);
             this.emailService.sendVerificationCode(correo, nuevoCodigoCorreo);
 
@@ -111,6 +112,37 @@ public class UsuarioController {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("error en endpoint '/ReenviarCodigo'");
 
+        }
+
+    }
+
+    @PostMapping({"/CrearRecepcionista", "/api/User/CrearRecepcionista"})
+    public ResponseEntity<Usuario> CrearRecepcionista(@RequestBody CrearUsuarioRequest body){
+        try {
+            Usuario usuarioCreado = this.usuarioService.crearUsuarioConRol(body);
+            return ResponseEntity.status(HttpStatus.CREATED).body(usuarioCreado);
+        }catch (Exception e){
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+    }
+
+    @PostMapping ("/Login")
+    public ResponseEntity<String> Login (@RequestBody LoginDTO body ){
+
+        try {
+            System.out.println(body.toString());
+            Usuario user = usuarioService.encontrarConCorreo(body.getMail());
+            if (user == null){
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("no existe el usuario");
+            }
+            if (user.compararPasswords(body.getPassword())){
+                return ResponseEntity.status(HttpStatus.OK).body(user.getRol());
+            }
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("password incorrecta");
+        } catch (Exception e){
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("error 500");
         }
 
     }

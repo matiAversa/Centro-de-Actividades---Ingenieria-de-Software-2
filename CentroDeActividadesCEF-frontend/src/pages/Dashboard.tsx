@@ -4,9 +4,7 @@ import DashboardCard from "../components/DashboardCard";
 import Spinner from "../components/Spinner";
 import "../styles/dashboard.css";
 
-import { obtenerSocios } from "../services/socioService";
-import { obtenerActividades } from "../services/actividadService";
-import { obtenerInscripciones } from "../services/inscripcionService";
+import { obtenerDashboardResumen } from "../services/dashboardService";
 
 function Dashboard() {
 	const [sociosActivos, setSociosActivos] = useState(0);
@@ -17,23 +15,12 @@ function Dashboard() {
 	const cargarResumen = async () => {
 		setLoading(true);
 		try {
-			const [sociosData, actividadesData, inscripcionesData] =
-				await Promise.all([
-					obtenerSocios(),
-					obtenerActividades(),
-					obtenerInscripciones(),
-				]);
+			const resumen = await obtenerDashboardResumen();
 
-			setSociosActivos(
-				sociosData.filter((socio) => socio.estado === "Activo").length,
-			);
-
-			setActividades(actividadesData.length);
-			setInscripciones(inscripcionesData.length);
-
-			setActividadesCompletas(
-				actividadesData.filter((actividad) => actividad.cupos <= 0).length,
-			);
+			setSociosActivos(resumen.sociosActivos);
+			setActividades(resumen.actividades);
+			setInscripciones(resumen.inscripciones);
+			setActividadesCompletas(resumen.actividadesCompletas);
 		} catch (error) {
 			console.error("Error cargando resumen:", error);
 		} finally {

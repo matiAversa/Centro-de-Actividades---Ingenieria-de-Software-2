@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import Layout from "../components/Layout";
 import AddSocioModal from "../components/AddSocioModal";
+import AddRecepcionistaModal from "../components/AddRecepcionistaModal";
 import Spinner from "../components/Spinner";
 import "../styles/socios.css";
 
@@ -8,17 +9,24 @@ import {
 	obtenerSocios,
 	crearSocio,
 	actualizarSocio,
-	eliminarSocioApi,
 	type Socio,
 } from "../services/socioService";
+import {
+	crearRecepcionista,
+	type RecepcionistaForm,
+} from "../services/usuarioService";
 
 function Socios() {
 	const [isModalOpen, setIsModalOpen] = useState(false);
+	const [isRecepcionistaModalOpen, setIsRecepcionistaModalOpen] =
+		useState(false);
 	const [socioSeleccionado, setSocioSeleccionado] = useState<Socio | null>(
 		null,
 	);
 	const [search, setSearch] = useState("");
 	const [socios, setSocios] = useState<Socio[]>([]);
+	const [message, setMessage] = useState<string>("");
+	const [messageType, setMessageType] = useState<"success" | "error" | "">("");
 
 	const cargarSocios = async () => {
 		setLoading(true);
@@ -27,14 +35,14 @@ function Socios() {
 			setSocios(data);
 		} catch (error) {
 			console.error("Error cargando socios:", error);
+			setMessage("No se pudieron cargar los socios.");
+			setMessageType("error");
 		} finally {
 			setLoading(false);
 		}
 	};
 
 	useEffect(() => {
-		let mounted = true;
-
 		void (async () => {
 			try {
 				await cargarSocios();
@@ -43,9 +51,7 @@ function Socios() {
 			}
 		})();
 
-		return () => {
-			mounted = false;
-		};
+		return undefined;
 	}, []);
 
 	const [loading, setLoading] = useState(false);
@@ -68,27 +74,25 @@ function Socios() {
 			await cargarSocios();
 			setSocioSeleccionado(null);
 			setIsModalOpen(false);
+			setMessage("Socio guardado correctamente.");
+			setMessageType("success");
 		} catch (error) {
 			console.error("Error guardando socio:", error);
+			setMessage("No se pudo guardar el socio.");
+			setMessageType("error");
 		}
 	};
 
-	const eliminarSocio = async (id?: number) => {
-		if (!id) return;
-
-		const confirmar = window.confirm("¿Eliminar socio?");
-
-		if (!confirmar) return;
-
+	const guardarRecepcionista = async (recepcionista: RecepcionistaForm) => {
 		try {
-			await eliminarSocioApi(id);
-			await cargarSocios();
+			await crearRecepcionista(recepcionista);
+			setIsRecepcionistaModalOpen(false);
+			setMessage("Recepcionista creado correctamente.");
+			setMessageType("success");
 		} catch (error) {
-			console.error(
-				"Error eliminando socio:",
-				error instanceof Error ? error.message : error,
-			);
-			alert(error instanceof Error ? error.message : "Error eliminando socio");
+			console.error("Error guardando recepcionista:", error);
+			setMessage("No se pudo crear el recepcionista.");
+			setMessageType("error");
 		}
 	};
 
@@ -104,16 +108,31 @@ function Socios() {
 				<div className="socios-header">
 					<h2>Gestión de Socios</h2>
 
-					<button
-						className="add-socio-btn"
-						onClick={() => {
-							setSocioSeleccionado(null);
-							setIsModalOpen(true);
-						}}
-					>
-						+ Agregar socio
-					</button>
+					<div className="socios-header-actions">
+						<button
+							className="add-recepcionista-btn"
+							onClick={() => {
+								setIsRecepcionistaModalOpen(true);
+							}}
+						>
+							+ Agregar recepcionista
+						</button>
+
+						<button
+							className="add-socio-btn"
+							onClick={() => {
+								setSocioSeleccionado(null);
+								setIsModalOpen(true);
+							}}
+						>
+							+ Agregar socio
+						</button>
+					</div>
 				</div>
+
+				{message && (
+					<div className={`message-box ${messageType}`}>{message}</div>
+				)}
 
 				<input
 					className="search-input"
@@ -192,6 +211,12 @@ function Socios() {
 					}}
 					onSaveSocio={(socio: unknown) => guardarSocio(socio as Socio)}
 					socioToEdit={socioSeleccionado}
+				/>
+
+				<AddRecepcionistaModal
+					isOpen={isRecepcionistaModalOpen}
+					onClose={() => setIsRecepcionistaModalOpen(false)}
+					onSaveRecepcionista={guardarRecepcionista}
 				/>
 			</div>
 		</Layout>
