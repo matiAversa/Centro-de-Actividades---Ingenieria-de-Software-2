@@ -52,14 +52,6 @@ public class PagoService {
         nuevoPago.setMetodo("Mercado Pago");
 
         pagoRepository.save(nuevoPago);
-
-        Inscripcion nuevaInscripcion = new Inscripcion();
-        nuevaInscripcion.setSocio(socio);
-        nuevaInscripcion.setClase(clase);
-
-        nuevaInscripcion.setFechaInscripcion(LocalDateTime.now().toString());
-
-        inscripcionRepository.save(nuevaInscripcion);
     }
 
     public List<Pago> getPagosPorUsuario(Long usuarioId) {
