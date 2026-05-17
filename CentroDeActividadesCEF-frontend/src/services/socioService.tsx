@@ -1,17 +1,20 @@
-const API_URL = "http://localhost:8080/api/socios";
+const API_URL = "http://localhost:8080/User";
 
 export type Socio = {
-	id?: number;
-	nombre: string;
-	email: string;
-	telefono?: string;
-	fechaNacimiento?: string;
-	cuota: string;
+	id: number;
+    nombre: string;
+    apellido: string;
+    dni: string;
+    fechaNacimiento: string; // formato DD/MM/AAAA
+    genero: string;
+    telefono: string;
+    correo: string;
+    rol: string;
 	estado: string;
 };
 
 export const obtenerSocios = async (): Promise<Socio[]> => {
-	const response = await fetch(API_URL);
+	const response = await fetch(API_URL + "/socios");
 
 	if (!response.ok) {
 		throw new Error("Error al obtener socios");

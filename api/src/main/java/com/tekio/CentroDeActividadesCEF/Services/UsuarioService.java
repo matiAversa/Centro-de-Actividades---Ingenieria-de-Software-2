@@ -11,6 +11,7 @@ import com.tekio.CentroDeActividadesCEF.Repositories.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 
@@ -83,6 +84,10 @@ public class UsuarioService {
     public Usuario buscarPorId(Integer id) {
         return this.usuarioRepository.findById(id)
                 .orElseThrow();
+    }
+
+    public List<Usuario> obtenerSocios() {
+        return usuarioRepository.findByRolIdRol(3);
     }
 
 }

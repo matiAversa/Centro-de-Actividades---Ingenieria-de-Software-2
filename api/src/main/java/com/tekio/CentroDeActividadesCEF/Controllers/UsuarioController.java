@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 import java.time.Period;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 @CrossOrigin(origins = "http://localhost:5173")
 @RestController
@@ -159,10 +160,31 @@ public class UsuarioController {
                 u.getGenero().getNombreGenero(),
                 u.getTelefono(),
                 u.getCorreo(),
-                u.getRol()
+                u.getRol(),
+                u.getEstado()
         );
         return ResponseEntity.ok(dto);
     }
+
+    @GetMapping("/socios")
+    public ResponseEntity<List<UsuarioDTO>> getSocios() {
+        List<Usuario> socios = usuarioService.obtenerSocios();
+        List<UsuarioDTO> respuesta = socios.stream().map(u -> new UsuarioDTO(
+                u.getId(),
+                u.getNombre(),
+                u.getApellido(),
+                u.getDni(),
+                u.getFechaNacimiento(),
+                u.getGenero() != null ? u.getGenero().getNombreGenero() : null,
+                u.getTelefono(),
+                u.getCorreo(),
+                u.getRol(),
+                u.getEstado()
+        )).toList();
+
+        return ResponseEntity.ok(respuesta);
+    }
+
 
 
 

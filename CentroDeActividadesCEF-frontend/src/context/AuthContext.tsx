@@ -49,7 +49,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
                 case "2":
                     role = "RECEPCIONISTA";
                     break;
-                case "5":
+                case "3":
                     role = "SOCIO";
                     break;
                 default:

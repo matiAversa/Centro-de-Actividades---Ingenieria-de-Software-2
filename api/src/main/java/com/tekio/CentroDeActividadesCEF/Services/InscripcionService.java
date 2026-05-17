@@ -73,7 +73,7 @@ public class InscripcionService {
                 LocalDate.now().toString());
 
         inscripcion.setEstadoPago(
-                "PENDIENTE_PAGO");
+                "PAGADA");
 
         return inscripcionRepository
                 .save(inscripcion);
@@ -126,7 +126,7 @@ public class InscripcionService {
                             LocalDate.now().toString());
 
                     inscripcion.setEstadoPago(
-                            "PENDIENTE_PAGO");
+                            "PAGADA");
 
                     return inscripcionRepository
                             .save(inscripcion);

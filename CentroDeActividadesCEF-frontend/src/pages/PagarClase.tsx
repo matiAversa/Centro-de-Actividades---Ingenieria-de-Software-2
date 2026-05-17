@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import UserLayout from "../components/UserLayout";
 import { initMercadoPago, Wallet } from '@mercadopago/sdk-react';
+import { useAuth } from "../context/useAuth";
 
 interface Actividad {
   id: number;
@@ -33,6 +34,8 @@ function PagarClase() {
   const [preferenceId, setPreferenceId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   
+  const { user } = useAuth(); // <-- 2. INYECTAR EL CONTEXTO DE AUTENTICACIÓN
+  const socioId = user?.socioId;
 
   useEffect(() => {
     const generarPreferencia = async () => {
@@ -41,10 +44,11 @@ function PagarClase() {
         return;
       }
       localStorage.setItem('pending_inscription', JSON.stringify({
-        socioId: 1, // sacar de cookie tbd
+        socioId: socioId,
         claseId: clase.id,
         monto: clase.precio
-    }));
+      }));
+
       try {
         const response = await fetch("http://localhost:8080/api/pagos/crear-preferencia", {
           method: "POST",
@@ -70,8 +74,19 @@ function PagarClase() {
       }
     };
 
-    generarPreferencia();
-  }, [clase]);
+    if (socioId) {
+      generarPreferencia();
+    }
+  }, [clase, socioId]);
+  if (!socioId) {
+    return (
+      <UserLayout>
+        <div className="dashboard-content">
+          <p>Cargando información del usuario...</p>
+        </div>
+      </UserLayout>
+    );
+  }
 
   return (
     <UserLayout>

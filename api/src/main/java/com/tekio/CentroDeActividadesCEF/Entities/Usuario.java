@@ -12,7 +12,7 @@ public class Usuario {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer Id;
+    private Integer id;
 
     @NotNull
     private String nombre;
@@ -83,7 +83,7 @@ public class Usuario {
     }
 
     public Integer getId() {
-        return this.Id;
+        return this.id;
     }
 
     public String getNombre() {
@@ -112,5 +112,9 @@ public class Usuario {
 
     public String getCorreo() {
         return correo;
+    }
+
+    public String getEstado() {
+        return estado;
     }
 }

@@ -63,11 +63,14 @@ function Socios() {
 			} else {
 				await crearSocio({
 					nombre: socio.nombre,
-					email: socio.email,
+					correo: socio.correo,
 					telefono: socio.telefono,
 					fechaNacimiento: socio.fechaNacimiento,
-					cuota: "Pendiente",
 					estado: "Activo",
+					apellido: "",
+					dni: "",
+					genero: "",
+					rol: ""
 				});
 			}
 
@@ -99,7 +102,7 @@ function Socios() {
 	const sociosFiltrados = socios.filter(
 		(socio) =>
 			socio.nombre.toLowerCase().includes(search.toLowerCase()) ||
-			socio.email.toLowerCase().includes(search.toLowerCase()),
+			socio.correo.toLowerCase().includes(search.toLowerCase()),
 	);
 
 	return (
@@ -151,7 +154,6 @@ function Socios() {
 								<th>ID</th>
 								<th>Nombre</th>
 								<th>Email</th>
-								<th>Cuota</th>
 								<th>Estado</th>
 								<th>Acciones</th>
 							</tr>
@@ -162,8 +164,7 @@ function Socios() {
 								<tr key={socio.id}>
 									<td>{socio.id}</td>
 									<td>{socio.nombre}</td>
-									<td>{socio.email}</td>
-									<td>{socio.cuota}</td>
+									<td>{socio.correo}</td>
 									<td>
 										<span
 											className={
