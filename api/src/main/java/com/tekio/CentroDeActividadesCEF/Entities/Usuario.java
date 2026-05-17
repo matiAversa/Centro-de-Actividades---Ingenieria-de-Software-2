@@ -79,4 +79,8 @@ public class Usuario {
     public String getRol (){
         return this.rol.getIdRol().toString();
     }
+
+    public Integer getUserId() {
+        return userId;
+    }
 }
