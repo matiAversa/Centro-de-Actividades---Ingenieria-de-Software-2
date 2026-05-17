@@ -208,6 +208,13 @@ function Perfil() {
 								>
 									Gestionar usuarios
 								</button>
+								<button
+									type="button"
+									className="perfil-action-button"
+									onClick={() => setIsModalOpen(true)}
+								>
+									Editar perfil
+								</button>
 
 								<button
 									type="button"
@@ -218,6 +225,12 @@ function Perfil() {
 								</button>
 							</div>
 						</section>
+						<EditPerfilModal
+							isOpen={isModalOpen}
+							onClose={() => setIsModalOpen(false)}
+							usuario={usuario}
+							onSave={guardarPerfil}
+						/>
 					</div>
 				) : usuario ? (
 					<div className="perfil-grid">
