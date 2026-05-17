@@ -2,6 +2,7 @@ package com.tekio.CentroDeActividadesCEF.Controllers;
 
 import com.tekio.CentroDeActividadesCEF.Auxiliar.VerificationCode;
 import com.tekio.CentroDeActividadesCEF.DTO.CrearUsuarioRequest;
+import com.tekio.CentroDeActividadesCEF.DTO.LoginDTO;
 import com.tekio.CentroDeActividadesCEF.DTO.MailConCodigo;
 import com.tekio.CentroDeActividadesCEF.DTO.SignUpRequest;
 import com.tekio.CentroDeActividadesCEF.Entities.Usuario;
@@ -124,6 +125,26 @@ public class UsuarioController {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
+    }
+
+    @PostMapping ("/Login")
+    public ResponseEntity<String> Login (@RequestBody LoginDTO body ){
+
+        try {
+            System.out.println(body.toString());
+            Usuario user = usuarioService.encontrarConCorreo(body.getMail());
+            if (user == null){
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("no existe el usuario");
+            }
+            if (user.compararPasswords(body.getPassword())){
+                return ResponseEntity.status(HttpStatus.OK).body(user.getRol());
+            }
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("password incorrecta");
+        } catch (Exception e){
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("error 500");
+        }
+
     }
 
 

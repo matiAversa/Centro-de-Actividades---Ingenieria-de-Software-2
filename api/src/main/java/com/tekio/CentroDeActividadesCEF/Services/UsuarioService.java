@@ -1,6 +1,7 @@
 package com.tekio.CentroDeActividadesCEF.Services;
 
 import com.tekio.CentroDeActividadesCEF.DTO.CrearUsuarioRequest;
+import com.tekio.CentroDeActividadesCEF.DTO.LoginDTO;
 import com.tekio.CentroDeActividadesCEF.Entities.Genero;
 import com.tekio.CentroDeActividadesCEF.Entities.Rol;
 import com.tekio.CentroDeActividadesCEF.Entities.Usuario;
@@ -72,6 +73,11 @@ public class UsuarioService {
         nuevoUsuario.normalizarDatos();
         return this.usuarioRepository.save(nuevoUsuario);
 
+    }
+
+    public Usuario encontrarConCorreo (String mail){
+
+        return this.usuarioRepository.findByCorreo(mail);
     }
 
 }

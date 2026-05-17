@@ -15,8 +15,8 @@ function Login() {
 
 	const [error, setError] = useState("");
 
-	const handleLogin = () => {
-		const user = login(email, password);
+	const handleLogin = async () => {
+		const user = await login(email, password);
 
 		if (!user) {
 			setError("Credenciales incorrectas");
