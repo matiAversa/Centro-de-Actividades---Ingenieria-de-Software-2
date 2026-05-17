@@ -2,6 +2,7 @@ package com.tekio.CentroDeActividadesCEF.Services;
 
 import com.tekio.CentroDeActividadesCEF.DTO.CrearUsuarioRequest;
 import com.tekio.CentroDeActividadesCEF.DTO.LoginDTO;
+import com.tekio.CentroDeActividadesCEF.DTO.UsuarioDTO;
 import com.tekio.CentroDeActividadesCEF.Entities.Genero;
 import com.tekio.CentroDeActividadesCEF.Entities.Rol;
 import com.tekio.CentroDeActividadesCEF.Entities.Usuario;
@@ -83,6 +84,36 @@ public class UsuarioService {
     public Usuario buscarPorId(Integer id) {
         return this.usuarioRepository.findById(id)
                 .orElseThrow();
+    }
+
+    public Usuario actualizarUsuarioDesdeDTO(Integer id, UsuarioDTO dto) {
+        Usuario u = this.usuarioRepository.findById(id).orElseThrow();
+
+        if (dto.getNombre() != null && !dto.getNombre().isBlank()) u.setNombre(dto.getNombre().trim());
+        if (dto.getApellido() != null && !dto.getApellido().isBlank()) u.setApellido(dto.getApellido().trim());
+        if (dto.getDni() != null && !dto.getDni().isBlank()) u.setDni(dto.getDni().trim());
+        if (dto.getFechaNacimiento() != null && !dto.getFechaNacimiento().isBlank()) u.setFechaNacimiento(dto.getFechaNacimiento().trim());
+        if (dto.getTelefono() != null && !dto.getTelefono().isBlank()) u.setTelefono(dto.getTelefono().trim());
+
+        if (dto.getCorreo() != null && !dto.getCorreo().isBlank()){
+            String normalized = dto.getCorreo().trim().toLowerCase();
+            if (!normalized.equals(u.getCorreo()) && existeCorreo(normalized)) {
+                throw new RuntimeException("El mail ya esta registrado en el sistema.");
+            }
+            u.setCorreo(normalized);
+        }
+
+        if (dto.getGenero() != null && !dto.getGenero().isBlank()){
+            java.util.Optional<Genero> generoOpt = this.generoRepository.findByNombreGenero(dto.getGenero().trim());
+            if (generoOpt.isPresent()){
+                u.setGenero(generoOpt.get());
+            } else {
+                throw new RuntimeException("Genero no encontrado");
+            }
+        }
+
+        u.normalizarDatos();
+        return this.usuarioRepository.save(u);
     }
 
 }

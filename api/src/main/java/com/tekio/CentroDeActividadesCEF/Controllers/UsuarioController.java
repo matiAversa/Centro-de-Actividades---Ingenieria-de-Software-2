@@ -164,6 +164,28 @@ public class UsuarioController {
         return ResponseEntity.ok(dto);
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateUsuario(@PathVariable Integer id, @RequestBody UsuarioDTO body){
+        try{
+            Usuario updated = this.usuarioService.actualizarUsuarioDesdeDTO(id, body);
+            UsuarioDTO dto = new UsuarioDTO(
+                    updated.getId(),
+                    updated.getNombre(),
+                    updated.getApellido(),
+                    updated.getDni(),
+                    updated.getFechaNacimiento(),
+                    updated.getGenero().getNombreGenero(),
+                    updated.getTelefono(),
+                    updated.getCorreo(),
+                    updated.getRol()
+            );
+            return ResponseEntity.ok(dto);
+        }catch (Exception e){
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("error al actualizar usuario");
+        }
+    }
+
 
 
 
