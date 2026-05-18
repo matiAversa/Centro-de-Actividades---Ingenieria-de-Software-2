@@ -75,7 +75,9 @@ public class Usuario {
 
     public Boolean compararPasswords (String pass){
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-        return passwordEncoder.matches(this.contrasena, pass);
+        System.out.println(this.contrasena);
+        System.out.println(pass);
+        return passwordEncoder.matches(pass, this.contrasena);
     }
 
     public String getRol (){
@@ -116,5 +118,33 @@ public class Usuario {
 
     public String getEstado() {
         return estado;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+    public void setApellido(String apellido) {
+        this.apellido = apellido;
+    }
+
+    public void setDni(String dni) {
+        this.dni = dni;
+    }
+
+    public void setFechaNacimiento(String fechaNacimiento) {
+        this.fechaNacimiento = fechaNacimiento;
+    }
+
+    public void setGenero(Genero genero) {
+        this.genero = genero;
+    }
+
+    public void setTelefono(String telefono) {
+        this.telefono = telefono;
+    }
+
+    public void setCorreo(String correo) {
+        this.correo = correo;
     }
 }

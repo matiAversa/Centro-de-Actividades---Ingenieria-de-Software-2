@@ -10,7 +10,8 @@ type Props = {
 function UserLayout({ children }: Props) {
 	const { user } = useAuth();
 
-	const isAdmin = user?.role === "ADMIN";
+	const isAdmin =
+		user?.role === "ADMINISTRADOR" || user?.role === "RECEPCIONISTA";
 
 	return (
 		<div className="dashboard-container">

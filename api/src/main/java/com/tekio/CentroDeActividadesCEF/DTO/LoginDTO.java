@@ -10,8 +10,8 @@ public class LoginDTO {
 
 
     public LoginDTO (String email, String password){
-        System.out.println("que aparece en el constr---"+ email);
-        this.password = encriptar(password);
+        //this.password = encriptar(password);
+        this.password = password;
         this.email = email;
     }
 
@@ -24,7 +24,7 @@ public class LoginDTO {
     }
 
     private String encriptar (String passwordParam){
-
+        System.out.println("password q llega del login antes de encode: -- "+ passwordParam);
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         String hash = passwordEncoder.encode(passwordParam);
         return hash;

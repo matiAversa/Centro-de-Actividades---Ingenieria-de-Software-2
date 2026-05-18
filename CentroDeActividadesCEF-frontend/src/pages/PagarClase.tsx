@@ -34,8 +34,8 @@ function PagarClase() {
   const [preferenceId, setPreferenceId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   
-  const { user } = useAuth(); // <-- 2. INYECTAR EL CONTEXTO DE AUTENTICACIÓN
-  const socioId = user?.socioId;
+  const { user } = useAuth(); //
+  const socioId = user?.usuarioId;
 
   useEffect(() => {
     const generarPreferencia = async () => {

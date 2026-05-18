@@ -3,6 +3,8 @@ package com.tekio.CentroDeActividadesCEF.Entities;
 import com.tekio.CentroDeActividadesCEF.DTO.SignUpRequest;
 import jakarta.persistence.*;
 import org.antlr.v4.runtime.misc.NotNull;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Entity
 public class UsuarioPendiente {
@@ -58,7 +60,10 @@ public class UsuarioPendiente {
             this.apellido = datos.getApellido();
             this.dni = datos.getDni();
             this.nombre = datos.getNombre();
-            this.contrasena = datos.getContrasena();
+            System.out.println("pass q llega del registro antes de encode: -- "+ datos.getContrasena());
+            PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+            String hash = passwordEncoder.encode(datos.getContrasena());
+            this.contrasena = hash;
             this.genero = datos.getGenero();
             this.correo = datos.getCorreo();
             this.fechaNacimiento = datos.getFechaNacimiento();

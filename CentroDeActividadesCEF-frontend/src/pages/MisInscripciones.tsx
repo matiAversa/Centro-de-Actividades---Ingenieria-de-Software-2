@@ -40,13 +40,13 @@ function MisInscripciones() {
 	const [filtroPago, setFiltroPago] = useState<FiltroPago>("TODAS");
 
 	const { user } = useAuth();
-	const socioId = user?.socioId;
+	const usuarioId = user?.usuarioId;
 
 	useEffect(() => {
 		const obtenerInscripciones = async () => {
 			try {
 				const response = await fetch(
-					`http://localhost:8080/api/inscripciones/user/${socioId}`,
+					`http://localhost:8080/api/inscripciones/user/${usuarioId}`,
 				);
 
 				if (!response.ok) {
@@ -63,13 +63,13 @@ function MisInscripciones() {
 			}
 		};
 
-		if (socioId) {
+		if (usuarioId) {
 			void obtenerInscripciones();
 		} else {
 			// eslint-disable-next-line react-hooks/set-state-in-effect
 			setLoading(false);
 		}
-	}, [socioId]);
+	}, [usuarioId]);
 
 	const cancelarInscripcion = async (id: number) => {
 		const confirmar = window.confirm(
@@ -263,7 +263,7 @@ function MisInscripciones() {
 		return fechaA.getTime() - fechaB.getTime();
 	})[0];
 
-	if (!socioId) {
+	if (!usuarioId) {
 		return (
 			<UserLayout>
 				<p>Error al obtener el usuario.</p>

@@ -3,7 +3,7 @@ import { useAuth } from "../context/useAuth";
 import "../styles/Navbar.css";
 
 const isAdminLikeRole = (role?: string) =>
-	role === "ADMIN" || role === "RECEPCIONISTA";
+	role === "ADMINISTRADOR" || role === "RECEPCIONISTA" || role === "ADMIN";
 
 function Navbar() {
 	const navigate = useNavigate();
@@ -23,11 +23,11 @@ function Navbar() {
 	};
 
 	const roleLabel =
-		user?.role === "ADMIN"
+		user?.role === "ADMINISTRADOR"
 			? "Admin"
 			: user?.role === "RECEPCIONISTA"
 				? "Recep."
-				: "Socio";
+				: "Usuario";
 
 	const userTitle = isAdminLikeRole(user?.role)
 		? user?.role === "RECEPCIONISTA"
@@ -37,7 +37,7 @@ function Navbar() {
 
 	const userSubtitle = isAdminLikeRole(user?.role)
 		? "Panel de control"
-		: "Portal socio";
+		: "Portal de usuario";
 
 	return (
 		<header className="navbar">
