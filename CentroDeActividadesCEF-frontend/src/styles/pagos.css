@@ -5,62 +5,179 @@
 .pagos-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  margin-bottom: 25px;
+  align-items: flex-end;
+  gap: 20px;
+  margin-bottom: 28px;
+}
+
+.pagos-subtitle {
+  margin: 0 0 8px;
+  color: #b31d24;
+  font-size: 0.88rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
 .pagos-header h2 {
-  color: #163F7A;
-  font-size: 34px;
+  margin: 0;
+  color: #163f7a;
+  font-size: 2.2rem;
 }
 
-.pagos-header button {
-  background: #D01F25;
-  color: white;
-  border: none;
-  padding: 14px 22px;
-  border-radius: 14px;
-  cursor: pointer;
-  font-weight: bold;
-}
-
-.pagos-table {
-  width: 100%;
-  background: white;
-  border-radius: 20px;
-  overflow: hidden;
-  border-collapse: collapse;
-  box-shadow: 0 8px 20px rgba(0,0,0,.08);
-}
-
-.pagos-table th {
-  background: #163F7A;
-  color: white;
-  padding: 20px;
-}
-
-.pagos-table td {
-  padding: 20px;
-  border-bottom: 1px solid #eee;
-}
-
-.status {
-  padding: 8px 16px;
+.pagos-summary {
+  padding: 12px 18px;
   border-radius: 999px;
-  font-weight: bold;
+  background: rgba(22, 63, 122, 0.08);
+  color: #163f7a;
+  font-weight: 700;
 }
 
-.pagado {
-  background: #d4edda;
-  color: #1b5e20;
+.pagos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 18px;
 }
 
-.pendiente {
-  background: #fff3cd;
-  color: #856404;
+.pago-card {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding: 22px;
+  border-radius: 22px;
+  background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+  border: 1px solid rgba(22, 63, 122, 0.08);
+  box-shadow: 0 16px 36px rgba(13, 35, 68, 0.08);
 }
 
-.vencido {
-  background: #fdecea;
-  color: #b71c1c;
+.pago-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.pago-label {
+  display: block;
+  margin-bottom: 4px;
+  color: #6b7280;
+  font-size: 0.82rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.pago-card strong {
+  color: #10284d;
+  font-size: 1.05rem;
+  word-break: break-word;
+}
+
+.pago-details {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px 14px;
+  margin: 0;
+}
+
+.pago-details div {
+  min-width: 0;
+}
+
+.pago-details dt {
+  color: #6b7280;
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.pago-details dd {
+  margin: 6px 0 0;
+  color: #1f2937;
+  font-size: 0.98rem;
+  font-weight: 600;
+  word-break: break-word;
+}
+
+.estado-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 14px;
+  border-radius: 999px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+.estado-pagada,
+.estado-aprobado,
+.estado-aceptado {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.estado-pendiente,
+.estado-en-proceso {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.estado-vencido,
+.estado-rechazado,
+.estado-cancelado {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.estado-desconocido {
+  background: #e5e7eb;
+  color: #374151;
+}
+
+.pagos-empty {
+  padding: 32px;
+  border-radius: 22px;
+  background: #fff;
+  border: 1px dashed rgba(22, 63, 122, 0.18);
+  color: #1f2937;
+  box-shadow: 0 12px 28px rgba(13, 35, 68, 0.05);
+}
+
+.pagos-empty h3 {
+  margin: 0 0 8px;
+  color: #163f7a;
+}
+
+.pagos-empty p {
+  margin: 0;
+  color: #4b5563;
+  line-height: 1.55;
+}
+
+.pagos-empty.error {
+  border-color: rgba(176, 28, 28, 0.2);
+  background: #fff7f7;
+}
+
+@media (max-width: 768px) {
+  .pagos-container {
+    padding: 24px;
+  }
+
+  .pagos-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .pagos-header h2 {
+    font-size: 1.8rem;
+  }
+
+  .pago-details {
+    grid-template-columns: 1fr;
+  }
 }

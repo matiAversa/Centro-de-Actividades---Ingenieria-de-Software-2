@@ -55,4 +55,8 @@ public class PagoService {
     public List<Pago> getPagosPorUsuario(Long usuarioId) {
         return pagoRepository.findBySocio_Id(usuarioId);
     }
+
+    public List<Pago> getTodosLosPagos() {
+        return pagoRepository.findAll();
+    }
 }

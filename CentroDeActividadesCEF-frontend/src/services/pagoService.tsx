@@ -1,8 +1,21 @@
 const API_BASE_URL = import.meta.env.VITE_API_URL ?? "http://localhost:8080";
+export type Socio = {
+	id: number;
+    nombre: string;
+    apellido: string;
+    dni: string;
+    fechaNacimiento: string; // formato DD/MM/AAAA
+    genero: string;
+    telefono: string;
+    correo: string;
+    rol: string;
+	estado: string;
+};
 
 export type Pago = {
   id?: number;
   mpPaymentId?: number | string;
+  socio: Socio;
   monto?: number;
   moneda?: string;
   fechaPago?: string;
@@ -14,6 +27,16 @@ export type Pago = {
       nombre?: string;
     } | null;
   } | null;
+};
+
+export const obtenerPagos = async (): Promise<Pago[]> => {
+  const response = await fetch(`${API_BASE_URL}/api/pagos/`);
+
+  if (!response.ok) {
+    throw new Error("Error al obtener pagos");
+  }
+
+  return response.json();
 };
 
 export const obtenerPagosPorSocio = async (

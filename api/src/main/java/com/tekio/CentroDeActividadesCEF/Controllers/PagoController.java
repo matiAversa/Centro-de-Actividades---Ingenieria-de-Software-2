@@ -82,4 +82,10 @@ public class PagoController {
 
         return ResponseEntity.ok(pagos);
     }
+
+    @GetMapping("/")
+    public List<Pago> getPagos() {
+        return pagoService.getTodosLosPagos();
+    }
+
 }
