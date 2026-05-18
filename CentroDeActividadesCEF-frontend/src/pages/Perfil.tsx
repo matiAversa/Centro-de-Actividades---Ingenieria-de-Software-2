@@ -259,7 +259,7 @@ function Perfil() {
 										<dt>Correo electrónico</dt>
 										<dd>{usuario.correo}</dd>
 									</div>
-									<div>	
+									<div>
 										<dt>Fecha de nacimiento</dt>
 										<dd>{usuario.fechaNacimiento || "Sin cargar"}</dd>
 									</div>
@@ -268,10 +268,7 @@ function Perfil() {
 										<dd>{usuario.genero || "Sin cargar"}</dd>
 									</div>
 
-									<div>
-										<dt>Rol</dt>
-										<dd>{roleLabel}</dd>
-									</div>
+
 								</dl>
 								<EditPerfilModal
 									isOpen={isModalOpen}
