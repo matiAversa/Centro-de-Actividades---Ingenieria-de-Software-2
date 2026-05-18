@@ -99,7 +99,7 @@ const Success = () => {
               >
                 Ver mis clases
               </button>
-              <Link to="/" className="success-btn">
+              <Link to="/home" className="success-btn">
                 Volver al inicio
               </Link>
             </div>

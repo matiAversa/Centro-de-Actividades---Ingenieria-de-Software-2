@@ -2,7 +2,7 @@ package com.tekio.CentroDeActividadesCEF.DTO;
 
 public class UsuarioDTO {
 
-    private Integer Id;
+    private Integer id;
     private String nombre;
     private String apellido;
     private String dni;
@@ -11,9 +11,10 @@ public class UsuarioDTO {
     private String telefono;
     private String correo;
     private String rol;
+    private String estado;
 
-    public UsuarioDTO(Integer userId, String nombre, String apellido, String dni, String fechaNacimiento, String genero, String telefono, String correo, String rol) {
-        this.Id = userId;
+    public UsuarioDTO(Integer userId, String nombre, String apellido, String dni, String fechaNacimiento, String genero, String telefono, String correo, String rol, String estado) {
+        this.id = userId;
         this.nombre = nombre;
         this.apellido = apellido;
         this.dni = dni;
@@ -22,10 +23,11 @@ public class UsuarioDTO {
         this.telefono = telefono;
         this.correo = correo;
         this.rol = rol;
+        this.estado = estado;
     }
 
     public Integer getId() {
-        return Id;
+        return id;
     }
 
     public String getNombre() {
@@ -58,5 +60,9 @@ public class UsuarioDTO {
 
     public String getRol() {
         return rol;
+    }
+
+    public String getEstado() {
+        return estado;
     }
 }

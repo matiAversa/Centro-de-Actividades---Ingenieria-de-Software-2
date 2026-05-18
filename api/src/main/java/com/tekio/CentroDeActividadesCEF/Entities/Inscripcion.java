@@ -19,7 +19,7 @@ public class Inscripcion {
 
     private String fechaInscripcion;
 
-    private String estadoPago = "PENDIENTE_PAGO";
+    private String estadoPago;
 
     public Inscripcion() {
     }
