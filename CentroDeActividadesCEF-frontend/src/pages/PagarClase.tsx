@@ -24,13 +24,34 @@ interface Clase {
 
 interface LocationState {
   clase?: Clase;
+  tipo?: string;
 }
 
 initMercadoPago(import.meta.env.VITE_MP_PUBLIC_KEY, { locale: 'es-AR' });
 
 function PagarClase() {
   const location = useLocation();
-  const { clase } = (location.state || {}) as LocationState;
+  const { clase, tipo } = (location.state || {}) as LocationState;
+  const obtenerInicioMes = (fecha: string) => {
+    const date = new Date(`${fecha}T00:00:00`);
+    const year = date.getFullYear();
+    const month = date.getMonth() + 1;
+
+    return `${year}-${String(month).padStart(2, "0")}-01`;
+  };
+  const monto = clase.precio * (tipo === 'mes' ? 4 : 1);
+  const obtenerFinMes = (fecha: string) => {
+    const date = new Date(`${fecha}T00:00:00`);
+    const year = date.getFullYear();
+    const month = date.getMonth();
+
+    const finMes = new Date(year, month + 1, 0);
+
+    return `${finMes.getFullYear()}-${String(finMes.getMonth() + 1).padStart(
+      2,
+      "0",
+    )}-${String(finMes.getDate()).padStart(2, "0")}`;
+  };
   const [preferenceId, setPreferenceId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   
@@ -43,10 +64,18 @@ function PagarClase() {
         setIsLoading(false);
         return;
       }
+      const monto = clase.precio * (tipo === 'mes' ? 4 : 1);
+
+      const fechaInicio = tipo === 'mes' ? obtenerInicioMes(clase.fecha) : clase.fecha;
+      const fechaFin = tipo === 'mes' ? obtenerFinMes(clase.fecha) : clase.fecha;
+
       localStorage.setItem('pending_inscription', JSON.stringify({
         socioId: socioId,
         claseId: clase.id,
-        monto: clase.precio
+        monto,
+        tipo: tipo === 'mes' ? 'mes' : 'dia',
+        fechaInicio,
+        fechaFin,
       }));
 
       try {
@@ -57,7 +86,7 @@ function PagarClase() {
           },
           body: JSON.stringify({
             nombre: `Inscripción a ${clase.actividad.nombre}`,
-            precio: clase.precio,
+            precio: monto,
           }),
         });
 
@@ -101,7 +130,10 @@ function PagarClase() {
           <div style={{ marginTop: "12px", marginBottom: "12px" }}>
             <p><strong>Clase:</strong> {clase.actividad.nombre}</p>
             <p><strong>Profesor:</strong> {clase.profesor}</p>
-            <p><strong>Precio:</strong> ${clase.precio}</p>
+            <p>
+              <strong>Precio:</strong> ${monto}
+              {tipo === 'mes' && <span> (mes completo)</span>}
+            </p>
           </div>
         )}
 

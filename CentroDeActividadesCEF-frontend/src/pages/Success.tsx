@@ -26,7 +26,7 @@ const Success = () => {
         return;
       }
 
-      const { socioId, claseId, monto } = JSON.parse(pendingData);
+      const { socioId, claseId, monto, tipo, fechaInicio, fechaFin } = JSON.parse(pendingData);
 
       try {
         const response = await fetch(`${import.meta.env.VITE_API_URL}/api/inscripciones/confirmar`, {
@@ -38,6 +38,9 @@ const Success = () => {
             usuarioId: socioId,
             claseId: claseId,
             monto: monto,
+            tipo: tipo || 'dia',
+            fechaInicio: fechaInicio || null,
+            fechaFin: fechaFin || null,
             externalReference: 0
           }),
         });

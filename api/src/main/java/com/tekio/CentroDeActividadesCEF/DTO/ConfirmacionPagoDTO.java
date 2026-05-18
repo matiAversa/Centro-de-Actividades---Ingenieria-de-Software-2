@@ -1,6 +1,7 @@
 package com.tekio.CentroDeActividadesCEF.DTO;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 
 public class ConfirmacionPagoDTO implements Serializable {
 
@@ -10,6 +11,9 @@ public class ConfirmacionPagoDTO implements Serializable {
     private Double monto;
     private Integer usuarioId;
     private Integer claseId;
+    private String tipo;
+    private LocalDate fechaInicio;
+    private LocalDate fechaFin;
 
     public ConfirmacionPagoDTO() {
     }
@@ -60,5 +64,29 @@ public class ConfirmacionPagoDTO implements Serializable {
 
     public void setClaseId(Integer claseId) {
         this.claseId = claseId;
+    }
+
+    public String getTipo() {
+        return tipo;
+    }
+
+    public void setTipo(String tipo) {
+        this.tipo = tipo;
+    }
+
+    public LocalDate getFechaInicio() {
+        return fechaInicio;
+    }
+
+    public void setFechaInicio(LocalDate fechaInicio) {
+        this.fechaInicio = fechaInicio;
+    }
+
+    public LocalDate getFechaFin() {
+        return fechaFin;
+    }
+
+    public void setFechaFin(LocalDate fechaFin) {
+        this.fechaFin = fechaFin;
     }
 }

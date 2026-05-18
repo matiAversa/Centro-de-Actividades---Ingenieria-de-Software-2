@@ -162,55 +162,17 @@ function Clases() {
 	};
 
 	const inscribirse = (clase: Clase) => {
-		navigate("/pagarclase", { state: { clase } });
+		navigate("/pagarclase", { state: { clase, tipo: "dia" } });
 	};
 
-	const inscribirseAlMes = async (clase: Clase) => {
+	const inscribirseAlMes = (clase: Clase) => {
 		const confirmar = window.confirm(
 			`¿Querés inscribirte al mes completo de ${clase.actividad?.nombre}?`,
 		);
 
 		if (!confirmar) return;
 
-		try {
-			setInscribiendoMensualId(clase.id);
-
-			const response = await fetch(
-				"http://localhost:8080/api/inscripciones/mensual",
-				{
-					method: "POST",
-					headers: {
-						"Content-Type": "application/json",
-					},
-					body: JSON.stringify({
-						socioId: usuarioId,
-						actividadId: clase.actividad.id,
-						fechaInicio: obtenerInicioMes(clase.fecha),
-						fechaFin: obtenerFinMes(clase.fecha),
-					}),
-				},
-			);
-
-			if (!response.ok) {
-				const mensaje = await response.text();
-				throw new Error(
-					mensaje || "No se pudo realizar la inscripción mensual",
-				);
-			}
-
-			alert("Inscripción mensual realizada correctamente");
-			await cargarDatos();
-		} catch (error) {
-			console.error(error);
-
-			if (error instanceof Error) {
-				alert(error.message);
-			} else {
-				alert("Error al inscribirse al mes");
-			}
-		} finally {
-			setInscribiendoMensualId(null);
-		}
+		navigate("/pagarclase", { state: { clase, tipo: "mes" } });
 	};
 
 	const formatearFecha = (fecha: string) => {

@@ -9,6 +9,13 @@ public class InscripcionMensualRequest {
     private LocalDate fechaInicio;
     private LocalDate fechaFin;
 
+    public InscripcionMensualRequest(Integer socioId, Long actividadId, LocalDate fechaInicio, LocalDate fechaFin) {
+        this.socioId = socioId;
+        this.actividadId = actividadId;
+        this.fechaInicio = fechaInicio;
+        this.fechaFin = fechaFin;
+    }
+
     public Integer getSocioId() {
         return socioId;
     }

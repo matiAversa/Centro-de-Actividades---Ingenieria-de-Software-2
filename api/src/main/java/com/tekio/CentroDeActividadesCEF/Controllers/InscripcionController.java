@@ -67,7 +67,12 @@ public class InscripcionController {
     public ResponseEntity<?> confirmar(@RequestBody ConfirmacionPagoDTO datos) {
         try {
             pagoService.procesarExito(datos);
-            inscripcionService.crear(datos.getUsuarioId(), datos.getClaseId());
+            if (datos.getTipo() == "dia") {
+                inscripcionService.crear(datos.getUsuarioId(), datos.getClaseId());
+            }
+            else {
+                inscripcionService.crearMensual(new InscripcionMensualRequest(datos.getUsuarioId(), datos.getClaseId().longValue(), datos.getFechaInicio(), datos.getFechaFin()));
+            }
             return ResponseEntity.ok(Map.of("message", "Proceso completado con éxito"));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
