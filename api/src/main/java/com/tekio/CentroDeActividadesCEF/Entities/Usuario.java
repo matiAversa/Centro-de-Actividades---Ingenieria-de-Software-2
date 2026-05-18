@@ -46,7 +46,7 @@ public class Usuario {
     @JoinColumn(name = "idRol", nullable = false)
     private Rol rol;
 
-    private String estado;
+    private String estado = "NO ACTIVO";
 
 
     @OneToOne(mappedBy = "usuario", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
@@ -146,5 +146,9 @@ public class Usuario {
 
     public void setCorreo(String correo) {
         this.correo = correo;
+    }
+
+    public void setEstado(String estado) {
+        this.estado = estado;
     }
 }

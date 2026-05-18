@@ -75,6 +75,9 @@ public class InscripcionService {
         inscripcion.setEstadoPago(
                 "PAGADA");
 
+        socio.setEstado("ACTIVO");
+        usuarioRepository.save(socio);
+
         return inscripcionRepository
                 .save(inscripcion);
     }

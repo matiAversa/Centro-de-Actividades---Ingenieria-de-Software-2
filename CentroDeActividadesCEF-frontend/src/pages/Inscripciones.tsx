@@ -212,7 +212,7 @@ function Inscripciones() {
 
     const texto = `
       ${inscripcion.socio?.nombre ?? ""}
-      ${inscripcion.socio?.email ?? ""}
+      ${inscripcion.socio?.correo ?? ""}
       ${obtenerNombreActividad(clase)}
       ${obtenerProfesor(clase)}
       ${clase?.fecha ?? ""}
@@ -252,7 +252,7 @@ function Inscripciones() {
 
                 {socios.map((socio) => (
                   <option key={socio.id} value={socio.id}>
-                    {socio.nombre} - {socio.email}
+                    {socio.nombre} - {socio.correo}
                   </option>
                 ))}
               </select>
@@ -313,7 +313,7 @@ function Inscripciones() {
                       <td>{inscripcion.id}</td>
                       <td>{inscripcion.socio?.nombre || "Sin socio"}</td>
                       <td className="email-cell">
-                        {inscripcion.socio?.email || "Sin email"}
+                        {inscripcion.socio?.correo || "Sin email"}
                       </td>
                       <td>{obtenerNombreActividad(clase)}</td>
                       <td>{obtenerProfesor(clase)}</td>
