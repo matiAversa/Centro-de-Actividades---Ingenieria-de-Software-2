@@ -257,16 +257,12 @@ function Perfil() {
 
 									<div>
 										<dt>Correo electrónico</dt>
-										<div
-											style={{
-												display: "flex",
-												justifyContent: "space-between",
-												alignItems: "center",
-											}}
-										></div>
+										<dd>{usuario.correo}</dd>
+									</div>
+									<div>	
+										<dt>Fecha de nacimiento</dt>
 										<dd>{usuario.fechaNacimiento || "Sin cargar"}</dd>
 									</div>
-
 									<div>
 										<dt>Género</dt>
 										<dd>{usuario.genero || "Sin cargar"}</dd>

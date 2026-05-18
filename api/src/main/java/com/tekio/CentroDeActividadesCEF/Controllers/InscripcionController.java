@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/api/inscripciones")
@@ -66,13 +67,17 @@ public class InscripcionController {
     @Transactional
     public ResponseEntity<?> confirmar(@RequestBody ConfirmacionPagoDTO datos) {
         try {
+            System.out.println("Guardando Pago");
             pagoService.procesarExito(datos);
-            if (datos.getTipo() == "dia") {
+            if (Objects.equals(datos.getTipo(), "dia")) {
+                System.out.println("Guardando Dia");
                 inscripcionService.crear(datos.getUsuarioId(), datos.getClaseId());
             }
             else {
+                System.out.println("Guardando Mes");
                 inscripcionService.crearMensual(new InscripcionMensualRequest(datos.getUsuarioId(), datos.getClaseId().longValue(), datos.getFechaInicio(), datos.getFechaFin()));
             }
+            System.out.println("Guardando Inscripcion");
             return ResponseEntity.ok(Map.of("message", "Proceso completado con éxito"));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)

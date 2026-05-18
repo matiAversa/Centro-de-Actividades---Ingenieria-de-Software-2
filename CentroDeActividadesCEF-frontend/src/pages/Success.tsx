@@ -82,7 +82,7 @@ const Success = () => {
           <div className="error-card">
             <h2>⚠ Error</h2>
             <p>{error}</p>
-            <Link to="/" className="error-btn">
+            <Link to="/home" className="error-btn">
               Volver al inicio
             </Link>
           </div>
@@ -96,12 +96,9 @@ const Success = () => {
               <strong>ID de Operación:</strong> {searchParams.get('payment_id')}
             </p>
             <div className="success-actions">
-              <button
-                onClick={() => navigate('/mis-clases')}
-                className="success-btn"
-              >
+              <Link to="/clases" className="success-btn">
                 Ver mis clases
-              </button>
+              </Link>
               <Link to="/home" className="success-btn">
                 Volver al inicio
               </Link>
