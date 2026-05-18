@@ -12,6 +12,7 @@ import com.tekio.CentroDeActividadesCEF.Repositories.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 
@@ -114,6 +115,10 @@ public class UsuarioService {
 
         u.normalizarDatos();
         return this.usuarioRepository.save(u);
+    }
+
+    public List<Usuario> listarSocios() {
+        return this.usuarioRepository.findByRol_IdRol(3);
     }
 
 }

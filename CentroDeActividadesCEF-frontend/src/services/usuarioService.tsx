@@ -17,6 +17,28 @@ export type RecepcionistaForm = {
 	rol: string;
 };
 
+export type UsuarioSocio = {
+	id: number;
+	nombre: string;
+	apellido: string;
+	dni: string;
+	fechaNacimiento: string;
+	genero: string;
+	telefono: string;
+	correo: string;
+	rol: string;
+};
+
+export const obtenerSocios = async (): Promise<UsuarioSocio[]> => {
+	const response = await fetch(`${API_BASE_URL}/User/socios`);
+
+	if (!response.ok) {
+		throw new Error("Error al obtener socios");
+	}
+
+	return response.json();
+};
+
 export const crearRecepcionista = async (recepcionista: RecepcionistaForm) => {
 	let lastErrorBody = "";
 

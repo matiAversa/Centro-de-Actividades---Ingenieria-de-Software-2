@@ -5,12 +5,7 @@ import AddRecepcionistaModal from "../components/AddRecepcionistaModal";
 import Spinner from "../components/Spinner";
 import "../styles/socios.css";
 
-import {
-	obtenerSocios,
-	crearSocio,
-	actualizarSocio,
-	type Socio,
-} from "../services/socioService";
+import { obtenerSocios, type UsuarioSocio } from "../services/usuarioService";
 import {
 	crearRecepcionista,
 	type RecepcionistaForm,
@@ -20,11 +15,10 @@ function Socios() {
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [isRecepcionistaModalOpen, setIsRecepcionistaModalOpen] =
 		useState(false);
-	const [socioSeleccionado, setSocioSeleccionado] = useState<Socio | null>(
-		null,
-	);
+	const [socioSeleccionado, setSocioSeleccionado] =
+		useState<UsuarioSocio | null>(null);
 	const [search, setSearch] = useState("");
-	const [socios, setSocios] = useState<Socio[]>([]);
+	const [socios, setSocios] = useState<UsuarioSocio[]>([]);
 	const [message, setMessage] = useState<string>("");
 	const [messageType, setMessageType] = useState<"success" | "error" | "">("");
 
@@ -56,31 +50,10 @@ function Socios() {
 
 	const [loading, setLoading] = useState(false);
 
-	const guardarSocio = async (socio: Socio) => {
-		try {
-			if (socio.id) {
-				await actualizarSocio(socio.id, socio);
-			} else {
-				await crearSocio({
-					nombre: socio.nombre,
-					email: socio.email,
-					telefono: socio.telefono,
-					fechaNacimiento: socio.fechaNacimiento,
-					cuota: "Pendiente",
-					estado: "Activo",
-				});
-			}
-
-			await cargarSocios();
-			setSocioSeleccionado(null);
-			setIsModalOpen(false);
-			setMessage("Socio guardado correctamente.");
-			setMessageType("success");
-		} catch (error) {
-			console.error("Error guardando socio:", error);
-			setMessage("No se pudo guardar el socio.");
-			setMessageType("error");
-		}
+	const guardarSocio = async (socio: UsuarioSocio) => {
+		// For now, just close the modal (edit not implemented for usuarios)
+		setSocioSeleccionado(null);
+		setIsModalOpen(false);
 	};
 
 	const guardarRecepcionista = async (recepcionista: RecepcionistaForm) => {
@@ -99,7 +72,7 @@ function Socios() {
 	const sociosFiltrados = socios.filter(
 		(socio) =>
 			socio.nombre.toLowerCase().includes(search.toLowerCase()) ||
-			socio.email.toLowerCase().includes(search.toLowerCase()),
+			socio.correo.toLowerCase().includes(search.toLowerCase()),
 	);
 
 	return (
@@ -151,7 +124,6 @@ function Socios() {
 								<th>ID</th>
 								<th>Nombre</th>
 								<th>Email</th>
-								<th>Cuota</th>
 								<th>Estado</th>
 								<th>Acciones</th>
 							</tr>
@@ -162,7 +134,7 @@ function Socios() {
 								<tr key={socio.id}>
 									<td>{socio.id}</td>
 									<td>{socio.nombre}</td>
-									<td>{socio.email}</td>
+									<td>{socio.correo}</td>
 									<td>{socio.cuota}</td>
 									<td>
 										<span
