@@ -75,7 +75,9 @@ public class Usuario {
 
     public Boolean compararPasswords (String pass){
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-        return passwordEncoder.matches(this.contrasena, pass);
+        System.out.println(this.contrasena);
+        System.out.println(pass);
+        return passwordEncoder.matches(pass, this.contrasena);
     }
 
     public String getRol (){

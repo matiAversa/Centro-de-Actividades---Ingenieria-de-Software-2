@@ -126,16 +126,19 @@ public class UsuarioController {
 
     @PostMapping ("/Login")
     public ResponseEntity<?> Login (@RequestBody LoginDTO body ){
-
+        System.out.println("recibe del login: --  "+ body.getPassword());
         try {
             System.out.println(body.toString());
             Usuario user = usuarioService.encontrarConCorreo(body.getMail());
             if (user == null){
+                System.out.println("no se encontro el usuario /////////////////");
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("no existe el usuario");
             }
             if (user.compararPasswords(body.getPassword())){
+                System.out.println("todo correcto para el login /////////////////");
                 return ResponseEntity.status(HttpStatus.OK).body(new LoginResponseDTO(user.getId(), user.getRol()));
             }
+            System.out.println("password incorrecta /////////////////");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("password incorrecta");
         } catch (Exception e){
             e.printStackTrace();

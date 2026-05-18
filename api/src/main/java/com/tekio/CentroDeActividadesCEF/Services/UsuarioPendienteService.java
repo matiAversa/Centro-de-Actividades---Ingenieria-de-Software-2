@@ -44,8 +44,8 @@ public class UsuarioPendienteService {
 
         UsuarioPendiente up = this.usuarioPendienteRepository.findByCorreo(mail);
         Genero genero = generoRepository.findById(up.getGenero()).orElse(null);
-        Rol rol = this.rolRepository.findByNombreRol("SOCIO")
-                .orElseGet(() -> this.rolRepository.save(new Rol("SOCIO")));
+        Rol rol = this.rolRepository.findByNombreRol("USUARIO")
+                .orElseGet(() -> this.rolRepository.save(new Rol("USUARIO")));
         return up.pendienteAUsuario(genero, rol);
     }
 
